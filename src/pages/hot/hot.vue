@@ -52,7 +52,7 @@ onLoad(async () => {
     <scroll-view scroll-y class="scroll-view">
       <view class="goods">
         <navigator hover-class="none" class="navigator" v-for=" goods  in  gaebageList " :key="goods.garbageId"
-          :url="`/pages/goods/goods?id=`">
+          :url="`/pages/goods/goods?id=${goods.garbageId}`">
           <image class="thumb" :src="goods.pic.picUrl"></image>
           <view class="name ellipsis">{{ goods.garbageName }}</view>
           <view class="price">
@@ -96,6 +96,7 @@ page {
 }
 
 .scroll-view {
+  height: 100%;
   flex: 1;
 }
 

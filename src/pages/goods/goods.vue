@@ -1,25 +1,67 @@
 <script setup lang="ts">
+import { onLoad } from '@dcloudio/uni-app';
+import { getGarbageAPI } from "@/services/shop";
+import { ref } from "vue";
+import type { Garbage } from '@/types/global';
+import AddressPanel from './components/AddressPanel.vue';
+import ServicePanel from './components/ServicePanel.vue';
+
 //获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
+
+//接收页面参数
+const query = defineProps<{
+  id: number
+}>()
+
+//弹出层
+const popup = ref<{
+  open: (type?:UniHelper.UniPopupType) => void,
+  close: () => void
+}>()
+//弹出层条件渲染
+const popupName = ref<'address'|'service'>()
+const openPopup = (name: typeof popupName.value) => {
+  popupName.value = name
+  popup.value?.open()
+}
+
+//滚动触底
+const guessRef = ref()
+const onScrolltolower = () => {
+  guessRef.value?.getMore()
+}
+
+//获取商品信息
+const garbage = ref<Garbage>()
+const getGarbage = async () => {
+  const { data } = await getGarbageAPI(query.id)
+  garbage.value = data
+}
+
+onLoad(async () => {
+  await Promise.all([getGarbage(),onScrolltolower()]) 
+})
+
 </script>
 
 <template>
-  <scroll-view :scroll-y="true" class="viewport">
+  <scroll-view :scroll-y="true" class="viewport" @scrolltolower="onScrolltolower">
     <!-- 基本信息 -->
     <view class="goods">
       <!-- 商品主图 -->
       <view class="preview">
-        <image mode="aspectFill" src="https://yanxuan-item.nosdn.127.net/99c83709ca5f9fd5c5bb35d207ad7822.png" />
+        <!-- <image mode="aspectFill" :src="garbage?.pic.picUrl" /> -->
       </view>
 
       <!-- 商品简介 -->
       <view class="meta">
         <view class="price">
           <text class="symbol">¥</text>
-          <text class="number">29.90</text>
+          <text class="number">{{ garbage?.garbagePrice.toFixed(2) }}</text>
         </view>
-        <view class="name ellipsis">云珍·轻软旅行长绒棉方巾 </view>
-        <view class="desc"> 轻巧无捻小方巾，旅行便携 </view>
+        <view class="name ellipsis">{{ garbage?.garbageName }}</view>
+        <view class="desc"> {{ garbage?.garbageDescription }}</view>
       </view>
 
       <!-- 操作面板 -->
@@ -29,12 +71,12 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
           <text class="text ellipsis"> 请选择商品规格</text>
           <text class="iconfont">&#xe663;</text>
         </view>
-        <view class="item arrow">
+        <view class="item arrow" @click="openPopup('address')">
           <text class="label">送至</text>
           <text class="text ellipsis"> 请选择收获地址</text>
           <text class="iconfont">&#xe663;</text>
         </view>
-        <view class="item arrow">
+        <view class="item arrow" @click="openPopup('service')">
           <text class="label">服务</text>
           <text class="text ellipsis"> 无忧退 快速退款 免费包邮</text>
           <text class="iconfont">&#xe663;</text>
@@ -65,33 +107,28 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
       </view>
     </view>
 
-    <!-- 同类推荐 -->
-    <view class="similar panel">
-      <view class="title">
-        <text>同类推荐</text>
-      </view>
-      <view class="content">
-        <navigator v-for="item in 4" :key="item" class="goods" hover-class="none" :url="`/pages/goods/goods?id=`">
-          <image class="image" mode="aspectFill"
-            src="https://yanxuan-item.nosdn.127.net/e0cea368f41da1587b3b7fc523f169d7.png"></image>
-          <view class="name ellipsis">简约山形纹全棉提花毛巾</view>
-          <view class="price">
-            <text class="symbol">¥</text>
-            <text class="number">18.50</text>
-          </view>
-        </navigator>
-      </view>
-    </view>
+    <!-- 猜你喜欢 -->
+    <RpGuess ref="guessRef" />
   </scroll-view>
 
   <!-- 用户操作 -->
   <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
     <view class="buttons">
-      <view class="user">客服</view>
+      <view class="user">咨询</view>
       <view class="addcart"> 收藏 </view>
       <view class="buynow"> 立即购买 </view>
     </view>
   </view>
+
+  <!-- 弹出层 -->
+  <uni-popup
+    ref="popup"
+    type="bottom"
+    background-color="#fff"
+  >
+    <AddressPanel v-if="popupName === 'address'" @close="popup?.close()"/>
+    <ServicePanel v-if="popupName === 'service'" @close="popup?.close()"/>
+  </uni-popup>
 </template>
 
 <style lang="scss">
@@ -151,8 +188,13 @@ page {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 240px;
+    height: 480rpx;
     overflow: hidden;
+
+    image {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .meta {
@@ -259,58 +301,6 @@ page {
   }
 }
 
-/* 同类推荐 */
-.similar {
-  padding-left: 20rpx;
-
-  .content {
-    padding: 0 20rpx 20rpx;
-    margin-left: -20rpx;
-    background-color: #f4f4f4;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-
-    navigator {
-      width: 310rpx;
-      padding: 24rpx 20rpx 20rpx;
-      margin: 5px 0 0 0;
-      border-radius: 10rpx;
-      background-color: #fff;
-      float: left;
-    }
-
-    .image {
-      width: 100%;
-      height: 260rpx;
-    }
-
-    .name {
-      height: 80rpx;
-      margin: 10rpx 0;
-      font-size: 26rpx;
-      color: #262626;
-    }
-
-    .price {
-      line-height: 1;
-      font-size: 20rpx;
-      color: #cf4444;
-    }
-
-    .number {
-      font-size: 26rpx;
-      margin-left: 2rpx;
-    }
-  }
-
-  navigator {
-    &:nth-child(even) {
-      margin-right: 0;
-    }
-  }
-}
-
 /* 底部工具栏 */
 .toolbar {
   background-color: #fff;
@@ -318,6 +308,7 @@ page {
   border-top: 1rpx solid #eaeaea;
   display: flex;
   align-items: center;
+
   .buttons {
     display: flex;
     justify-content: space-evenly;

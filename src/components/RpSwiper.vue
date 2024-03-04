@@ -42,6 +42,9 @@ const onChange: UniHelper.SwiperOnChange = (ev) => {
   transform: translateY(0);
   background-color: #efefef;
   height: 280rpx;
+  swiper{
+    height: 100%;
+  }
 
   .indicator {
     position: absolute;

@@ -19,7 +19,7 @@
 		{
 			"path": "pages/login/login",
 			"style": {
-				"navigationBarTitleText": "用户中心"
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -45,6 +45,19 @@
 			"style": {
 				"navigationBarTitleText": "废品详情"
 			}
+		},
+		{
+			"path": "pages/add/add",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "新增"
+			}
+		},
+		{
+			"path": "pages/my/my",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
 		}
 	],
 	"globalStyle": {
@@ -66,8 +79,21 @@
 				"pagePath": "pages/message/message"
 			},
 			{
-				"pagePath": "pages/login/login"
+				"pagePath": "pages/my/my"
 			}
 		]
-	}
+	},
+	"subPackages": [
+		{
+			"root": "pagesMember",
+			"pages": [
+				{
+					"path": "settings/settings",
+					"style": {
+						"navigationBarTitleText": "设置"
+					}
+				}
+			]
+		}
+	]
 }

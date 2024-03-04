@@ -18,7 +18,7 @@ const httpInterceptor = {
         //设置请求头 
         const user = useUserStore()
         // const token = user.userToken
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGFzcyI6IjE5MjAwNyIsInVzZXJFbWFpbCI6IjI5NzI4MDI3MDFAcXEuY29tIiwiaWF0IjoxNzA4Njg5NDA4LCJleHAiOjE3MDg3NzU4MDh9.nYnPo0vRTyJ2uljQdJ_iTRoT_Y3S9yN2-oG3Crfinfw'
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUGFzcyI6IjE5MjAwNyIsInVzZXJFbWFpbCI6IjI5NzI4MDI3MDFAcXEuY29tIiwiaWF0IjoxNzA5NTMzNDQxLCJleHAiOjE3MDk2MTk4NDF9.YvjqsHVA_P3LeezxDRoR4t26rpXP_lpkq7kKYTflRRc'
         if (token) {
             options.header['Authorization'] = 'Bearer ' + token
         }

@@ -74,7 +74,7 @@ onLoad(async () => {
                     </view>
                     <view class="section">
                         <navigator v-for="goods in items" :key="goods.garbageId" class="goods" hover-class="none"
-                            :url="`/pages/goods/goods?id=`">
+                            :url="`/pages/goods/goods?id=${goods.garbageId}`">
                             <image class="image" :src="goods.pic.picUrl"></image>
                             <view class="name ellipsis">{{ goods.garbageName }}</view>
                             <view class="price">
@@ -178,7 +178,7 @@ page {
 /* 二级分类 */
 .secondary {
     background-color: #fff;
-    margin-bottom: 50px;
+    height: calc( 100% - 140rpx);
 
     .carousel {
         height: 200rpx;
