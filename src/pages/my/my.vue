@@ -3,10 +3,10 @@
 const { safeAreaInsets } = uni.getSystemInfoSync()
 // 订单选项
 const orderTypes = [
-  { type: 1, text: '待付款', icon: 'icon-currency' },
-  { type: 2, text: '待发货', icon: 'icon-gift' },
-  { type: 3, text: '待收货', icon: 'icon-check' },
-  { type: 4, text: '待评价', icon: 'icon-comment' },
+  { type: 1, text: '我的订单', icon: '&#xe618;' },
+  { type: 2, text: '我的存款', icon: '&#xe68a;' },
+  { type: 3, text: '我的收藏', icon: '&#xe605;' },
+  { type: 4, text: '我的评价', icon: '&#xe601;' },
 ]
 </script>
 
@@ -47,27 +47,26 @@ const orderTypes = [
         设置
       </navigator>
     </view>
-    <!-- 我的订单 -->
+    <!-- 个人中心 -->
     <view class="orders">
       <view class="title">
-        我的订单
+        <text>个人中心</text>
         <navigator class="navigator" url="/pagesOrder/list/list?type=0" hover-class="none">
-          查看全部订单<text class="icon-right"></text>
+          查看更多<text class="icon-right"></text>
         </navigator>
       </view>
       <view class="section">
         <!-- 订单 -->
-        <navigator v-for="item in orderTypes" :key="item.type" :class="item.icon"
+        <navigator v-for="item in orderTypes" :key="item.type" 
           :url="`/pagesOrder/list/list?type=${item.type}`" class="navigator" hover-class="none">
-          {{ item.text }}
+          <text class="iconfont icon" v-html="item.icon"></text>
+          <text>{{ item.text }}</text>
         </navigator>
-        <!-- 客服 -->
-        <button class="contact icon-handset" open-type="contact">售后</button>
       </view>
     </view>
     <!-- 猜你喜欢 -->
     <view class="guess">
-      <XtxGuess ref="guessRef" />
+      <RpGuess ref="guessRef" />
     </view>
   </scroll-view>
   <!-- 底部导航 -->
@@ -169,6 +168,10 @@ page {
   box-shadow: 0 4rpx 6rpx rgba(240, 240, 240, 0.6);
 
   .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
     height: 40rpx;
     line-height: 40rpx;
     font-size: 28rpx;
@@ -177,7 +180,6 @@ page {
     .navigator {
       font-size: 24rpx;
       color: #939393;
-      float: right;
     }
   }
 
@@ -185,13 +187,21 @@ page {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 40rpx 20rpx 10rpx;
+    padding: 30rpx 0;
 
-    .navigator,
-    .contact {
-      text-align: center;
-      font-size: 24rpx;
-      color: #333;
+    .navigator{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .icon{
+        font-size: 50rpx;
+      }
+
+      text:nth-child(2){
+        margin-top: 6rpx;
+        font-size: 22rpx;
+      }
 
       &::before {
         display: block;

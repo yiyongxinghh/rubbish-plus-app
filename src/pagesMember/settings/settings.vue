@@ -1,5 +1,16 @@
 <script setup lang="ts">
-//
+import { useUserStore } from "@/stores/userStore";
+//引入用户仓库
+const userStore = useUserStore();
+
+//登出
+const logOut = () => {
+  userStore.clearToken()
+  userStore.clearUserData()
+  uni.navigateTo({ url: "/pages/login/login" });
+  uni.showToast({ title: "退出登录" });
+}
+
 </script>
 
 <template>
@@ -35,7 +46,7 @@
     </view>
     <!-- 操作按钮 -->
     <view class="action">
-      <view class="button">退出登录</view>
+      <view class="button" @click="logOut">退出登录</view>
     </view>
   </view>
 </template>
