@@ -1,13 +1,24 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useUserStore } from '@/stores/userStore'
+import { onLoad } from '@dcloudio/uni-app'
+// 获取用户信息
+const userStore = useUserStore()
+
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 // 订单选项
 const orderTypes = [
-  { type: 1, text: '我的订单', icon: '&#xe618;' },
-  { type: 2, text: '我的存款', icon: '&#xe68a;' },
-  { type: 3, text: '我的收藏', icon: '&#xe605;' },
-  { type: 4, text: '我的评价', icon: '&#xe601;' },
+  { type: 1, text: '我的订单', icon: '&#xe618;' ,url:'/pagesMember/order/order'},
+  { type: 2, text: '我的存款', icon: '&#xe68a;' ,url:'/pagesMember/money/money'},
+  { type: 3, text: '我的收藏', icon: '&#xe605;' ,url:'/pagesMember/collect/collect'},
+  { type: 4, text: '我的评价', icon: '&#xe601;' ,url:'/pagesMember/comment/comment'},
 ]
+
+onLoad(()=>{
+  // 获取用户信息
+
+})
 </script>
 
 <template>
@@ -15,13 +26,13 @@ const orderTypes = [
     <!-- 个人资料 -->
     <view class="profile" :style="{ paddingTop: safeAreaInsets!.top + 'px' }">
       <!-- 情况1：已登录 -->
-      <view class="overview" v-if="false">
+      <view class="overview" v-if="userStore.userDate">
         <navigator url="/pagesMember/profile/profile" hover-class="none">
-          <image class="avatar" mode="aspectFill"
-            src="https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/uploads/avatar_3.jpg"></image>
+          <!-- <image class="avatar" mode="aspectFill" :src="userStore.userDate.pic.picUrl"></image> -->
+          <image class="avatar" mode="aspectFill" src="https://server.rubbish-plus.top/files/1708689963958.jpg"></image>
         </navigator>
         <view class="meta">
-          <view class="nickname"> 黑马程序员 </view>
+          <view class="nickname">{{ userStore.userDate.userName }}</view>
           <navigator class="extra" url="/pagesMember/profile/profile" hover-class="none">
             <text class="update">更新头像昵称</text>
           </navigator>
@@ -58,7 +69,7 @@ const orderTypes = [
       <view class="section">
         <!-- 订单 -->
         <navigator v-for="item in orderTypes" :key="item.type" 
-          :url="`/pagesOrder/list/list?type=${item.type}`" class="navigator" hover-class="none">
+          :url="item.url" class="navigator" hover-class="none">
           <text class="iconfont icon" v-html="item.icon"></text>
           <text>{{ item.text }}</text>
         </navigator>
@@ -224,5 +235,6 @@ page {
 .guess {
   background-color: #f7f7f8;
   margin-top: 20rpx;
+  padding: 0;
 }
 </style>

@@ -38,11 +38,11 @@
           <input class="login-input email" v-model="registerFormData.userEmail" />
           <input class="login-input phone" v-model="registerFormData.userPhone" />
           <input class="login-input pass" password v-model="registerFormData.userPass" />
-          <input class="login-input again" v-model="registerFormData.againPass" />
-          <input class="login-input address" password v-model="registerFormData.userPass" />
+          <input class="login-input again" password v-model="registerFormData.againPass" />
+          <input class="login-input address" v-model="registerFormData.userAddress" />
         </view>
         <view class="login-button">
-          <button class="login-btn" @click="login(isCodeLogin)">注册</button>
+          <button class="login-btn" @click="register()">注册</button>
         </view>
       </view>
     </view>
@@ -50,12 +50,14 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import type { userData, registerData } from "@/types/login";
 import { getCodeAPI, emailLoginAPI, registerAPI, codeVerificationLoginAPI } from "@/services/login";
 import { useUserStore } from "@/stores/userStore";
 //引入打字库
 import Typed from 'typed.js';
+//验证库
+import validator from 'validator';
 
 //引入用户仓库
 const userStore = useUserStore()
@@ -112,6 +114,17 @@ const showToast = (title: string, isSuccess: boolean) => {
   })
 }
 
+//置空
+const empty = () => {
+  registerFormData.userEmail = ''
+  registerFormData.userPass = ''
+  registerFormData.againPass = ''
+  registerFormData.userName = ''
+  registerFormData.userPhone = ''
+  registerFormData.userAddress = ''
+}
+
+
 // 登录
 const login = async (isCodeLogin: boolean) => {
   if (isCodeLogin) {
@@ -143,6 +156,43 @@ const login = async (isCodeLogin: boolean) => {
     }
   }
 }
+
+// 注册
+const register = async () => {
+  if (!validator.isLength(registerFormData.userName, { min: 5, max: 10 })) {
+    return showToast('名字长度5-10', false)
+  }
+  if (!validator.isEmail(registerFormData.userEmail)) {
+    return showToast('邮箱不正确', false)
+  }
+  if (!validator.isMobilePhone(registerFormData.userPhone, 'zh-CN')) {
+    return showToast('手机不正确', false)
+  }
+  if (!validator.isLength(registerFormData.userPass, { min: 5, max: 10 })) {
+    return showToast('密码长度5-10', false)
+  }
+  if (!validator.equals(registerFormData.userPass, registerFormData.againPass)) {
+    return showToast('两次密码不一致', false)
+  }
+  if (!validator.isLength(registerFormData.userAddress, { min: 1 })) {
+    return showToast('地址太短', false)
+  }
+  try {
+    await registerAPI(registerFormData.userEmail,
+      registerFormData.userPass,
+      registerFormData.userName,
+      registerFormData.userPhone,
+      registerFormData.userAddress)
+    showToast('注册成功', true)
+    // 置空
+    empty()
+    // 返回登录
+    isRegister.value = false
+  } catch (error) {
+    showToast(error as string, false)
+  }
+}
+
 
 //开启自动打字
 const typing = () => {
@@ -258,6 +308,11 @@ page {
       background-repeat: no-repeat;
       z-index: 1;
     }
+  }
+
+  .error {
+    border: 1px solid rgb(244, 39, 32);
+    box-shadow: 0 0 1px 3px rgb(244, 39, 32);
   }
 
   .email {

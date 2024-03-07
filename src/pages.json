@@ -25,12 +25,14 @@
 		{
 			"path": "pages/shop/shop",
 			"style": {
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "商城"
 			}
 		},
 		{
 			"path": "pages/message/message",
 			"style": {
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "消息"
 			}
 		},
@@ -56,6 +58,7 @@
 		{
 			"path": "pages/my/my",
 			"style": {
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "我的"
 			}
 		}
@@ -91,6 +94,66 @@
 					"path": "settings/settings",
 					"style": {
 						"navigationBarTitleText": "设置"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesMember",
+			"pages": [
+				{
+					"path": "chat/chat",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "聊天"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesMember",
+			"pages": [
+				{
+					"path": "collect/collect",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "收藏"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesMember",
+			"pages": [
+				{
+					"path": "comment/comment",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "评价"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesMember",
+			"pages": [
+				{
+					"path": "money/money",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "存款"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesMember",
+			"pages": [
+				{
+					"path": "order/order",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "订单"
 					}
 				}
 			]

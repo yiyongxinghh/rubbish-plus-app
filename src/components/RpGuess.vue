@@ -76,13 +76,14 @@ defineExpose({
     </view>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 :host {
     display: block;
 }
 
 /* 分类标题 */
 .caption {
+    width: 100%;
     display: flex;
     justify-content: center;
     line-height: 1;
@@ -114,7 +115,7 @@ defineExpose({
     flex-wrap: wrap;
     justify-content: space-between;
     padding: 0 20rpx;
-    margin-bottom: 10px;
+    margin-bottom: 70px;
 
     .guess-item {
         width: 310rpx;

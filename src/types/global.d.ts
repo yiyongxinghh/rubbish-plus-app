@@ -22,6 +22,7 @@ export type User = {
     userAddress: string,
     userRank: number,
     userAmount: number,
+    pic:Pic
 }
 
 //图片类型

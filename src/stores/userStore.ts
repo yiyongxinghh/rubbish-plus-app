@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type { User } from '@/types/global'
 
 export const useUserStore = defineStore('user', () => {
     //用户信息
-    const userDate = ref({})
+    const userDate = ref<User | null>(null)
     //token
     const userToken = ref('')
     //保存token
-    const saveToken = (token:any) => {
+    const saveToken = (token:string) => {
         userToken.value = token
     }
 
@@ -17,13 +18,13 @@ export const useUserStore = defineStore('user', () => {
     }
 
     //保存用户信息
-    const saveUserData = (date:any) => {
+    const saveUserData = (date:User) => {
         userDate.value = date
     }
 
     //清空用户信息
     const clearUserData = () => {
-        userDate.value = {}
+        userDate.value = null
     }
     return {
         userDate,

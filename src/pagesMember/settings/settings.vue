@@ -11,6 +11,11 @@ const logOut = () => {
   uni.showToast({ title: "退出登录" });
 }
 
+//确认地址
+const confirmAddress = () => {
+  
+}
+
 </script>
 
 <template>
@@ -48,6 +53,10 @@ const logOut = () => {
     <view class="action">
       <view class="button" @click="logOut">退出登录</view>
     </view>
+    <uni-popup ref="popup" type="dialog">
+      <uni-popup-dialog mode="input" message="成功消息" :duration="2000"
+        @confirm="confirmAddress"></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
@@ -67,7 +76,7 @@ page {
   margin-bottom: 20rpx;
   border-radius: 10rpx;
 
-  button{
+  button {
     padding: 0;
   }
 
@@ -100,6 +109,7 @@ page {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     .icon {
       color: #e3d4d4;
       font-size: 48rpx;

@@ -106,6 +106,7 @@ page {
 }
 
 .search {
+    margin-top: 20rpx;
     padding: 0 30rpx 20rpx;
     background-color: #fff;
 
