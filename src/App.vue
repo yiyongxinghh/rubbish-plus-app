@@ -10,5 +10,11 @@ onHide(() => {
   console.log("App Hide");
 });
 </script>
+
 <template></template>
-<style></style>
+
+<style>
+.uni-input-input {
+  height: 100rpx;
+}
+</style>

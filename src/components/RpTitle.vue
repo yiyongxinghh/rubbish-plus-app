@@ -7,7 +7,7 @@
 
 <script setup lang='ts'>
 const props = defineProps({
-  title: String
+    title: String
 })
 
 const back = () => {
@@ -39,8 +39,11 @@ defineExpose({
     }
 
     & text:nth-child(2) {
+        position: absolute;
         font-weight: bold;
-        margin: 0 auto;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 }
 </style>

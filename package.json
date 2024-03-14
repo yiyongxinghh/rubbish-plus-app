@@ -60,6 +60,7 @@
     "@dcloudio/uni-mp-xhs": "3.0.0-alpha-3081220230802001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-3081220230802001",
     "@dcloudio/uni-ui": "^1.4.23",
+    "axios": "^1.6.7",
     "pinia": "2.0.27",
     "pinia-plugin-persistedstate": "^3.2.0",
     "typed.js": "^2.1.0",

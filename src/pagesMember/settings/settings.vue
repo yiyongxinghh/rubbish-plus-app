@@ -1,7 +1,13 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { useUserStore } from "@/stores/userStore";
+import { updateAddressAPI } from "@/services/setting";
+import type { User } from "@/types/global";
 //引入用户仓库
 const userStore = useUserStore();
+
+//地址弹出层
+const addressPopup = ref()
 
 //登出
 const logOut = () => {
@@ -12,8 +18,10 @@ const logOut = () => {
 }
 
 //确认地址
-const confirmAddress = () => {
-  
+const confirmAddress:UniHelper.UniPopupDialogOnConfirm = async (val) => {
+  userStore.userDate!.userAddress = String(val)
+  const res = await updateAddressAPI(userStore.userDate!.userId,userStore.userDate as User)
+  console.log(res);
 }
 
 </script>
@@ -22,10 +30,10 @@ const confirmAddress = () => {
   <view class="viewport">
     <!-- 列表1 -->
     <view class="list" v-if="true">
-      <navigator url="/pagesMember/address/address" hover-class="none" class="item arrow">
+      <view @click="addressPopup.open()" hover-class="none" class="item arrow">
         <text>我的收货地址</text>
         <text class="iconfont icon">&#xe663;</text>
-      </navigator>
+      </view>
     </view>
     <!-- 列表2 -->
     <view class="list">
@@ -53,8 +61,8 @@ const confirmAddress = () => {
     <view class="action">
       <view class="button" @click="logOut">退出登录</view>
     </view>
-    <uni-popup ref="popup" type="dialog">
-      <uni-popup-dialog mode="input" message="成功消息" :duration="2000"
+    <uni-popup ref="addressPopup" type="dialog">
+      <uni-popup-dialog mode="input" title="修改地址" :duration="2000" value=""
         @confirm="confirmAddress"></uni-popup-dialog>
     </uni-popup>
   </view>
