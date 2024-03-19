@@ -22,7 +22,7 @@ export type User = {
     userAddress: string,
     userRank: number,
     userAmount: number,
-    pic:Pic
+    pic: Pic
 }
 
 //图片类型
@@ -50,4 +50,21 @@ export type Category = {
 export type Page = {
     page?: number,
     pageSize?: number
+}
+
+//消息类型
+export type Message = {
+    messageId: number,
+    messageContent: string,
+    messageTime: Date,
+    messageIsRead: boolean,
+    sender: number,
+    recipent: number
+}
+
+//收藏夹类型
+export type Collection = {
+    collectionId?: number,
+    collectionName: string,
+    user: number
 }

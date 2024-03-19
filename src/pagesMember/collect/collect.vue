@@ -10,14 +10,23 @@
       </view>
       <!-- 输入框示例 -->
       <uni-popup ref="inputDialog" type="dialog">
-        <uni-popup-dialog ref="inputClose" mode="input" title="创建收藏夹" value="" placeholder="请输入内容"
-          @confirm="dialogInputConfirm"></uni-popup-dialog>
+        <uni-popup-dialog
+          ref="inputClose"
+          mode="input"
+          title="创建收藏夹"
+          value=""
+          placeholder="请输入收藏加名称"
+          @confirm="dialogInputConfirm"
+        ></uni-popup-dialog>
       </uni-popup>
       <view class="collect-list">
         <uni-collapse accordion>
           <uni-collapse-item title="收藏夹1" :border="false">
             <view class="collect-item">
-              <image src="https://server.rubbish-plus.top/files/1708689963958.jpg" mode="aspectFill" />
+              <image
+                src="https://server.rubbish-plus.top/files/1708689963958.jpg"
+                mode="aspectFill"
+              />
               <view class="collect-detail">
                 <text>XXX</text>
                 <text>库存 : XXX</text>
@@ -27,7 +36,10 @@
           </uni-collapse-item>
           <uni-collapse-item title="收藏夹2">
             <view class="collect-item">
-              <image src="https://server.rubbish-plus.top/files/1708689963958.jpg" mode="aspectFill" />
+              <image
+                src="https://server.rubbish-plus.top/files/1708689963958.jpg"
+                mode="aspectFill"
+              />
               <view class="collect-detail">
                 <text>XXX</text>
                 <text>库存 : XXX</text>
@@ -42,19 +54,42 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-const inputDialog = ref()
+import { ref } from "vue";
+import { createCollectionAPI } from "@/services/user";
+import { useUserStore } from "@/stores/userStore";
+
+const { userDate } = useUserStore();
 
 //弹出模态框
+const inputDialog = ref();
 const buildCollect = () => {
-  inputDialog.value.open()
-}
+  inputDialog.value.open();
+};
 
 //确定建立收藏夹
-const dialogInputConfirm:UniHelper.UniPopupDialogOnConfirm = (val) => {
-  console.log(val);
-}
-
+const dialogInputConfirm = async (val: string) => {
+  if (val) {
+    try {
+      await createCollectionAPI({
+        collectionName: val,
+        user: userDate?.userId as number,
+      });
+      return uni.showToast({
+        title: "创建成功",
+      });
+    } catch (error) {
+      return uni.showToast({
+        title: "错误",
+        icon: "error",
+      });
+    }
+  } else {
+    return uni.showToast({
+      title: "输入不能为空",
+      icon: "error",
+    });
+  }
+};
 </script>
 
 <style scoped lang="scss">

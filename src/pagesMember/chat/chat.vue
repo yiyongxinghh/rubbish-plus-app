@@ -1,29 +1,95 @@
 <template>
   <view class="caht-container">
     <!-- 头部 -->
-    <RpTitle :title="'聊天'"/>
+    <RpTitle :title="'聊天'" />
     <scroll-view class="chat-content" :scroll-y="true">
       <view class="chat-list">
-        <view class="chat-item" v-for="chat in 20" :class="chat % 2 ? 'outgoing' : 'incoming'">
-          <text>聊天内容</text>
+        <view
+          class="chat-item"
+          v-for="chat in messageContent?.messages"
+          :class="chat.senderId === senderId ? 'outgoing' : 'incoming'"
+        >
+          <text>{{ chat.messageContent }}</text>
         </view>
       </view>
     </scroll-view>
     <view class="chat-input">
-      <input type="text" />
-      <button>发送</button>
+      <input type="text" v-model="messageObject.messageContent" />
+      <button @click="sendMessage">发送</button>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
+import { getAllMessageAPI } from "@/services/message";
+import type { GroupedMessage, GroupedMessages } from "@/types/message";
+import { useUserStore } from "@/stores/userStore";
+import { onLoad } from "@dcloudio/uni-app";
+//引入socket
+import { socket, send, over } from "@/utils/socket";
+import { reactive, ref } from "vue";
 
+// 获取聊天对象id
+const { id } = defineProps(["id"]);
+// 获取本用户仓库
+const { userDate } = useUserStore();
+const senderId = userDate?.userId as number;
+//用户消息列表
+let userList:any = null;
 
-const backMessage = () => {
-  uni.navigateBack({
-    delta: 1
-  })
-}
+//消息内容
+const messageContent = ref<GroupedMessage>();
+
+//消息对象
+const messageObject = reactive({
+  sender: userDate?.userId,
+  recipient: parseInt(id),
+  messageContent: "",
+  messageTime: new Date(),
+});
+
+//发送消息
+const sendMessage = () => {
+  if (userList) {
+    //截取接收者
+    const sender = userList.find((user:any) => {
+      return user.userId === messageObject.recipient;
+    });
+    //截取发送者
+    const recipient = userList.find((user:any) => {
+      return user.userId === userDate?.userId;
+    });
+    //发送指定用户消息
+    send({
+      messageObject,
+      sender,
+      recipient,
+    });
+  } else {
+    send({ messageObject });
+  }
+  messageObject.messageContent = "";
+};
+
+onLoad(async () => {
+  //加载本用户消息
+  const {
+    data: { groupedMessages, total },
+  } = await getAllMessageAPI("", "", senderId, parseInt(id));
+  messageContent.value = groupedMessages[0];
+  //接收消息
+  socket.on("message-over", (data) => {
+    data.senderId = data.sender;
+    data.recipientId = data.recipient;
+    messageContent.value?.messages.push(data);
+  });
+  //监听用户消息，并返回列表
+  socket.on("load", (data) => {
+    console.log(data);
+    userList = data;
+  });
+  console.log(messageObject);
+});
 </script>
 
 <style scoped lang="scss">
@@ -64,8 +130,6 @@ page {
         align-self: start;
       }
     }
-
-
   }
 
   .chat-input {
