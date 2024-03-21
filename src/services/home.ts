@@ -1,5 +1,5 @@
 import type { Banner, PanelItem, HotItem, GuessItem } from "@/types/home"
-import type { Page } from "@/types/global"
+import type { Category, Page } from "@/types/global"
 import { http } from "@/utils/http"
 
 /**
@@ -48,5 +48,16 @@ export const getHomeGoodsGuessLikeAPI = (data?: Page) => {
         method: 'GET',
         url: '/garbage',
         data
+    })
+}
+
+/**
+ * 获取废品大类
+ * @returns 
+ */
+export const getCategories = ()=>{
+    return http({
+        method:'GET',
+        url:'/category'
     })
 }

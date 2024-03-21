@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useUserStore } from "@/stores/userStore";
+const {userDate} = useUserStore();
 //子调父
 const emit = defineEmits<{
-    (event:'close'):void
+    (event:'close',value:number|string):void
 }>();
 </script>
 
@@ -14,29 +16,18 @@ const emit = defineEmits<{
     <!-- 内容 -->
     <view class="content">
       <view class="item">
-        <view class="user">李明 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-checked"></text>
-      </view>
-      <view class="item">
-        <view class="user">王东 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-ring"></text>
-      </view>
-      <view class="item">
-        <view class="user">张三 13824686868</view>
-        <view class="address">北京市朝阳区孙河安平北街6号院</view>
+        <view class="user">{{ userDate.userName }} {{ userDate.userPhone }}</view>
+        <view class="address">{{ userDate.userAddress }}</view>
         <text class="icon icon-ring"></text>
       </view>
     </view>
     <view class="footer">
-      <view class="button primary"> 新建地址 </view>
-      <view v-if="false" class="button primary">确定</view>
+      <view class="button primary" @click="emit('close',userDate.userAddress)">确定</view>
     </view>
   </view>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .address-panel {
   padding: 0 30rpx;
   border-radius: 10rpx 10rpx 0 0;
@@ -63,8 +54,8 @@ const emit = defineEmits<{
 }
 
 .content {
-  min-height: 300rpx;
-  max-height: 540rpx;
+  min-height: 110rpx;
+  max-height: 240rpx;
   overflow: auto;
   padding: 20rpx;
   .item {

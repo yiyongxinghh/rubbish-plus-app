@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
+import { init } from "@/utils/goeasy";
 onLaunch(() => {
+  init()
   console.log("App Launch");
 });
 onShow(() => {

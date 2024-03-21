@@ -30,9 +30,8 @@
 import type { MessageList } from "@/types/message";
 import { getAllMessageByUserIdAPI } from "@/services/message";
 import { useUserStore } from "@/stores/userStore";
-import { onLoad } from "@dcloudio/uni-app";
-import { socket } from "@/utils/socket";
-import { ref } from "vue";
+import {  onShow } from "@dcloudio/uni-app";
+import {  ref } from "vue";
 const { userDate } = useUserStore();
 
 //聊天列表
@@ -53,15 +52,13 @@ const toChat = (id: number) => {
   });
 };
 
-onLoad(async () => {
+onShow(async () => {
   const { data } = await getAllMessageByUserIdAPI(userDate?.userId as number);
   data.forEach((item:any)=>{
     item.userId = (item.userId.filter((ele:any) => ele !==userDate?.userId))[0]
     item.userName = (item.userName.filter((ele:any) => ele !==userDate?.userName))[0]
   })
   messageList.value = data;
-  //发送本地用户消息
-  socket.emit("onload", { userId: userDate?.userId });
 });
 </script>
 

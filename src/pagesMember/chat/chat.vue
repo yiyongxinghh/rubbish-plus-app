@@ -6,7 +6,7 @@
       <view class="chat-list">
         <view
           class="chat-item"
-          v-for="chat in messageContent?.messages"
+          v-for="chat in messages?.messages"
           :class="chat.senderId === senderId ? 'outgoing' : 'incoming'"
         >
           <text>{{ chat.messageContent }}</text>
@@ -24,25 +24,30 @@
 import { getAllMessageAPI } from "@/services/message";
 import type { GroupedMessage, GroupedMessages } from "@/types/message";
 import { useUserStore } from "@/stores/userStore";
+import { useMessageSore } from "@/stores/messageStore";
+import { storeToRefs } from "pinia";
 import { onLoad } from "@dcloudio/uni-app";
-//引入socket
-import { socket, send, over } from "@/utils/socket";
-import { reactive, ref } from "vue";
+import { sub, send, channelJoin } from "@/utils/goeasy";
+import { emitter } from "@/utils/mitt";
+import { onUnmounted, reactive, ref } from "vue";
 
 // 获取聊天对象id
 const { id } = defineProps(["id"]);
 // 获取本用户仓库
 const { userDate } = useUserStore();
+const messageStore = useMessageSore();
+const { sender, recipient } = storeToRefs(messageStore);
 const senderId = userDate?.userId as number;
-//用户消息列表
-let userList:any = null;
+
+//创建频道
+const channel = channelJoin(senderId, id);
 
 //消息内容
-const messageContent = ref<GroupedMessage>();
+const messages = ref<GroupedMessage>();
 
 //消息对象
-const messageObject = reactive({
-  sender: userDate?.userId,
+const messageObject = ref({
+  sender: userDate?.userId as number,
   recipient: parseInt(id),
   messageContent: "",
   messageTime: new Date(),
@@ -50,45 +55,36 @@ const messageObject = reactive({
 
 //发送消息
 const sendMessage = () => {
-  if (userList) {
-    //截取接收者
-    const sender = userList.find((user:any) => {
-      return user.userId === messageObject.recipient;
-    });
-    //截取发送者
-    const recipient = userList.find((user:any) => {
-      return user.userId === userDate?.userId;
-    });
-    //发送指定用户消息
-    send({
-      messageObject,
-      sender,
-      recipient,
-    });
-  } else {
-    send({ messageObject });
-  }
-  messageObject.messageContent = "";
+  //发送指定用户消息
+  messageStore.saveData(
+    messageObject.value.sender,
+    messageObject.value.recipient
+  );
+  send(channel, messageObject.value);
+};
+
+const requestData = async () => {
+  const {
+    data: { groupedMessages },
+  } = await getAllMessageAPI("", "", senderId, parseInt(id));
+  messages.value = groupedMessages[0];
 };
 
 onLoad(async () => {
   //加载本用户消息
-  const {
-    data: { groupedMessages, total },
-  } = await getAllMessageAPI("", "", senderId, parseInt(id));
-  messageContent.value = groupedMessages[0];
-  //接收消息
-  socket.on("message-over", (data) => {
-    data.senderId = data.sender;
-    data.recipientId = data.recipient;
-    messageContent.value?.messages.push(data);
+  await requestData()
+  //监听频道
+  sub(channel);
+  emitter.on("empty", (val: any) => {
+    messageObject.value.messageContent = "";
   });
-  //监听用户消息，并返回列表
-  socket.on("load", (data) => {
-    console.log(data);
-    userList = data;
+  emitter.on("message", async () => {
+    await requestData()
   });
-  console.log(messageObject);
+});
+onUnmounted(() => {
+  emitter.off("empty");
+  emitter.off("message");
 });
 </script>
 
@@ -122,12 +118,11 @@ page {
       .outgoing {
         background-color: #3498db;
         color: #fff;
-        align-self: end;
+        margin-left: auto;
       }
 
       .incoming {
         background-color: #e0e0e0;
-        align-self: start;
       }
     }
   }

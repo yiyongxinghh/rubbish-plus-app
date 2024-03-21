@@ -21,7 +21,7 @@
       </uni-popup>
       <view class="collect-list">
         <uni-collapse accordion>
-          <uni-collapse-item title="收藏夹1" :border="false">
+          <uni-collapse-item :title="collection.collectionName" :border="false" v-for="collection in collectionList">
             <view class="collect-item">
               <image
                 src="https://server.rubbish-plus.top/files/1708689963958.jpg"
@@ -55,10 +55,14 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { createCollectionAPI } from "@/services/user";
+import { createCollectionAPI,findAllCollectionAPI } from "@/services/user";
 import { useUserStore } from "@/stores/userStore";
+import { onLoad } from "@dcloudio/uni-app";
+import type { Collection } from "@/types/global";
 
 const { userDate } = useUserStore();
+
+const collectionList = ref<Collection[]>([]);
 
 //弹出模态框
 const inputDialog = ref();
@@ -74,6 +78,7 @@ const dialogInputConfirm = async (val: string) => {
         collectionName: val,
         user: userDate?.userId as number,
       });
+      await requestCollections()
       return uni.showToast({
         title: "创建成功",
       });
@@ -90,6 +95,14 @@ const dialogInputConfirm = async (val: string) => {
     });
   }
 };
+
+const requestCollections = async ()=>{
+  collectionList.value = await findAllCollectionAPI(userDate?.userId as number) as any;
+}
+
+onLoad(async ()=>{
+  await requestCollections()
+})
 </script>
 
 <style scoped lang="scss">

@@ -1,3 +1,4 @@
+import type { Message } from "@/types/global"
 import type { GroupedMessages } from "@/types/message"
 import { http } from "@/utils/http"
 
@@ -30,6 +31,25 @@ export const getAllMessageByUserIdAPI = (userId: number) => {
         url: '/message/user',
         params: {
             userId
+        }
+    })
+}
+
+/**
+ * 创建消息
+ * @param message 
+ * @param channel 
+ * @returns 
+ */
+export const createMessageAPI = (message:Message,channel:string) => {
+    return http({
+        method: 'POST',
+        url:'/message',
+        params:{
+            channel
+        },
+        data:{
+            ...message
         }
     })
 }

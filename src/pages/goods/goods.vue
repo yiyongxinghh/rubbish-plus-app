@@ -1,57 +1,129 @@
 <script setup lang="ts">
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad } from "@dcloudio/uni-app";
 import { getGarbageAPI } from "@/services/shop";
-import { ref } from "vue";
-import type { Garbage } from '@/types/global';
-import AddressPanel from './components/AddressPanel.vue';
-import ServicePanel from './components/ServicePanel.vue';
+import {
+  insertGarbageToCollectionAPI,
+  findAllCollectionAPI,
+} from "@/services/user";
+import { reactive, ref } from "vue";
+import { useUserStore } from "@/stores/userStore";
+import type { Garbage, Collection } from "@/types/global";
+import AddressPanel from "./components/AddressPanel.vue";
+import ServicePanel from "./components/ServicePanel.vue";
+import CountPanel from "./components/CountPanel.vue";
 
 //获取屏幕边界到安全区域距离
-const { safeAreaInsets } = uni.getSystemInfoSync()
+const { safeAreaInsets } = uni.getSystemInfoSync();
+
+const user = useUserStore();
 
 //接收页面参数
 const query = defineProps<{
-  id: number
-}>()
+  id: string;
+}>();
+
+const formData = reactive({
+  count: 0,
+  address: "",
+});
+
+//抽屉
+const showLeft = ref();
 
 //弹出层
 const popup = ref<{
-  open: (type?:UniHelper.UniPopupType) => void,
-  close: () => void
-}>()
+  open: (type?: UniHelper.UniPopupType) => void;
+  close: () => void;
+}>();
 //弹出层条件渲染
-const popupName = ref<'address'|'service'>()
+const popupName = ref<"address" | "service" | "count" | "collect">();
 const openPopup = (name: typeof popupName.value) => {
-  popupName.value = name
-  popup.value?.open()
-}
+  popupName.value = name;
+  popup.value?.open();
+};
+const colsePopup = (value: number | string) => {
+  switch (popupName.value) {
+    case "address":
+      formData.address = value as string;
+      break;
+    case "count":
+      formData.count = value as number;
+      break;
+  }
+  popup.value?.close();
+};
 
 //滚动触底
-const guessRef = ref()
+const guessRef = ref();
 const onScrolltolower = () => {
-  guessRef.value?.getMore()
-}
+  guessRef.value?.getMore();
+};
+
+//咨询商家
+const chat = (userId: number) => {
+  uni.navigateTo({
+    url: `/pagesMember/chat/chat?id=${userId}`,
+  });
+};
+
+const changeCollection = ref();
+const collectionList = ref<Collection[]>([]);
+//收藏
+const collect = async (collectionId: number) => {
+  try {
+    await insertGarbageToCollectionAPI(collectionId, parseInt(query.id));
+  } catch (error) {
+    uni.showToast({
+      title: " 收藏失败",
+    });
+  }
+};
+//选择
+const change = (item:Collection) => {
+  const { collectionId } = item
+  changeCollection.value = collectionId;
+};
+
+//立即购买
+const buyNow = () => {
+  if (formData.count === 0) {
+    return uni.showToast({
+      title: "请选择购买数量",
+      icon: "none",
+    });
+  }
+  if (formData.address === "") {
+    return uni.showToast({
+      title: "请选择收货地址",
+      icon: "none",
+    });
+  }
+};
 
 //获取商品信息
-const garbage = ref<Garbage>()
+const garbage = ref<Garbage>();
 const getGarbage = async () => {
-  const { data } = await getGarbageAPI(query.id)
-  garbage.value = data
-}
+  const { data } = await getGarbageAPI(+query.id);
+  garbage.value = data;
+};
 
 onLoad(async () => {
-  await Promise.all([getGarbage(),onScrolltolower()]) 
-})
-
+  await Promise.all([getGarbage(), onScrolltolower()]);
+  collectionList.value = await findAllCollectionAPI(user.userDate!.userId) as any
+});
 </script>
 
 <template>
-  <scroll-view :scroll-y="true" class="viewport" @scrolltolower="onScrolltolower">
+  <scroll-view
+    :scroll-y="true"
+    class="viewport"
+    @scrolltolower="onScrolltolower"
+  >
     <!-- 基本信息 -->
     <view class="goods">
       <!-- 商品主图 -->
       <view class="preview">
-        <!-- <image mode="aspectFill" :src="garbage?.pic.picUrl" /> -->
+        <image mode="aspectFill" :src="garbage?.pic.picUrl" />
       </view>
 
       <!-- 商品简介 -->
@@ -66,14 +138,24 @@ onLoad(async () => {
 
       <!-- 操作面板 -->
       <view class="action">
-        <view class="item arrow">
+        <view class="item arrow" @click="openPopup('count')">
           <text class="label">选择</text>
-          <text class="text ellipsis"> 请选择商品规格</text>
+          <text v-if="formData.count === 0" class="text ellipsis">
+            请选择购买数量</text
+          >
+          <text v-else class="text ellipsis selected">
+            选择购买数量 {{ formData.count }}</text
+          >
           <text class="iconfont">&#xe663;</text>
         </view>
         <view class="item arrow" @click="openPopup('address')">
           <text class="label">送至</text>
-          <text class="text ellipsis"> 请选择收获地址</text>
+          <text v-if="!formData.address" class="text ellipsis">
+            请选择收获地址</text
+          >
+          <text v-else class="text ellipsis selected">
+            收获地址 {{ formData.address }}</text
+          >
           <text class="iconfont">&#xe663;</text>
         </view>
         <view class="item arrow" @click="openPopup('service')">
@@ -93,17 +175,38 @@ onLoad(async () => {
         <view class="properties">
           <!-- 属性详情 -->
           <view class="item">
-            <text class="label">属性名</text>
-            <text class="value">属性值</text>
+            <text class="label">废品分类</text>
+            <text class="value">{{ garbage?.category.categoryName }}</text>
           </view>
           <view class="item">
-            <text class="label">属性名</text>
-            <text class="value">属性值</text>
+            <text class="label">废品类型</text>
+            <text class="value">{{ garbage?.garbageType }}</text>
+          </view>
+          <view class="item">
+            <text class="label">废品描述</text>
+            <text class="value">{{ garbage?.garbageDescription }}</text>
           </view>
         </view>
         <!-- 图片详情 -->
-        <image mode="widthFix" src="https://yanxuan-item.nosdn.127.net/a8d266886d31f6eb0d7333c815769305.jpg"></image>
-        <image mode="widthFix" src="https://yanxuan-item.nosdn.127.net/a9bee1cb53d72e6cdcda210071cbd46a.jpg"></image>
+        <image mode="aspectFill" :src="garbage?.pic.picUrl"></image>
+      </view>
+    </view>
+    <!-- 评论 -->
+    <view class="comment panel">
+      <view class="title">
+        <text>评价</text>
+        <text class="send">发送</text>
+      </view>
+      <view class="content">
+        <uni-list :border="true">
+          <!-- 显示圆形头像 -->
+          <uni-list-chat
+            title="uni-app"
+            avatar="https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png"
+            note="您收到一条新的消息"
+            time="2020-02-02 20:20"
+          ></uni-list-chat>
+        </uni-list>
       </view>
     </view>
 
@@ -112,23 +215,37 @@ onLoad(async () => {
   </scroll-view>
 
   <!-- 用户操作 -->
-  <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
+  <view
+    class="toolbar"
+    :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }"
+  >
     <view class="buttons">
-      <view class="user">咨询</view>
-      <view class="addcart"> 收藏 </view>
-      <view class="buynow"> 立即购买 </view>
+      <view class="user" @click="chat(garbage.user.userId)">咨询</view>
+      <view class="addcart" @click="showLeft.open()"> 收藏 </view>
+      <view class="buynow" @click="buyNow()"> 立即购买 </view>
     </view>
   </view>
 
   <!-- 弹出层 -->
-  <uni-popup
-    ref="popup"
-    type="bottom"
-    background-color="#fff"
-  >
-    <AddressPanel v-if="popupName === 'address'" @close="popup?.close()"/>
-    <ServicePanel v-if="popupName === 'service'" @close="popup?.close()"/>
+  <uni-popup ref="popup" type="bottom" background-color="#fff">
+    <AddressPanel v-if="popupName === 'address'" @close="colsePopup" />
+    <ServicePanel v-if="popupName === 'service'" @close="colsePopup" />
+    <CountPanel v-if="popupName === 'count'" @close="colsePopup" />
   </uni-popup>
+
+  <uni-drawer ref="showLeft" mode="left" :width="320" @close="collect()">
+    <scroll-view scroll-y class="close">
+      <uni-list>
+        <uni-list-item
+          clickable
+          title="列表文字"
+          :rightText="changeCollection === index ? '已选择' : ''"
+          v-for="item in collectionList"
+          @click="change(item)"
+        />
+      </uni-list>
+    </scroll-view>
+  </uni-drawer>
 </template>
 
 <style lang="scss">
@@ -240,8 +357,6 @@ page {
   }
 
   .action {
-    padding-left: 20rpx;
-
     .item {
       height: 90rpx;
       padding-right: 60rpx;
@@ -261,6 +376,11 @@ page {
       width: 60rpx;
       color: #898b94;
       margin: 0 16rpx 0 10rpx;
+    }
+    .selected {
+      color: #414443;
+      font-size: 28rpx;
+      font-weight: bolder;
     }
 
     .text {
@@ -301,8 +421,22 @@ page {
   }
 }
 
+/* 评论 */
+.comment {
+  padding-left: 20rpx;
+  .title {
+    .send {
+      border: none;
+    }
+  }
+}
+
 /* 底部工具栏 */
 .toolbar {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
   background-color: #fff;
   height: 100rpx;
   border-top: 1rpx solid #eaeaea;
@@ -336,6 +470,9 @@ page {
       background-color: #27ba9b;
     }
   }
+}
 
+.close {
+  height: 100%;
 }
 </style>

@@ -68,11 +68,13 @@ const confirmAddress:UniHelper.UniPopupDialogOnConfirm = async (val) => {
   </view>
 </template>
 
-<style lang="scss" scoped>
+<style>
 page {
   background-color: #f4f4f4;
 }
+</style>
 
+<style lang="scss" scoped>
 .viewport {
   padding: 20rpx;
 }

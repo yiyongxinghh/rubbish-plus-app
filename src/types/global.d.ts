@@ -54,12 +54,12 @@ export type Page = {
 
 //消息类型
 export type Message = {
-    messageId: number,
+    messageId?: number,
     messageContent: string,
-    messageTime: Date,
-    messageIsRead: boolean,
+    messageTime?: Date,
+    messageIsRead?: boolean,
     sender: number,
-    recipent: number
+    recipient: number
 }
 
 //收藏夹类型

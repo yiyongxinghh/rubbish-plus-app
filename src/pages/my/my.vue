@@ -9,10 +9,10 @@ const userStore = useUserStore()
 const { safeAreaInsets } = uni.getSystemInfoSync()
 // 订单选项
 const orderTypes = [
-  { type: 1, text: '我的订单', icon: '&#xe618;' ,url:'/pagesMember/order/order'},
-  { type: 2, text: '我的存款', icon: '&#xe68a;' ,url:'/pagesMember/money/money'},
-  { type: 3, text: '我的收藏', icon: '&#xe605;' ,url:'/pagesMember/collect/collect'},
-  { type: 4, text: '我的评价', icon: '&#xe601;' ,url:'/pagesMember/comment/comment'},
+  { type: 1, text: '我的订单', icon: '../../static/my/order.png' ,url:'/pagesMember/order/order'},
+  { type: 2, text: '我的存款', icon: '../../static/my/money.png' ,url:'/pagesMember/money/money'},
+  { type: 3, text: '我的收藏', icon: '../../static/my/collect.png' ,url:'/pagesMember/collect/collect'},
+  { type: 4, text: '我的评价', icon: '../../static/my/comment.png' ,url:'/pagesMember/comment/comment'},
 ]
 
 onLoad(()=>{
@@ -70,7 +70,7 @@ onLoad(()=>{
         <!-- 订单 -->
         <navigator v-for="item in orderTypes" :key="item.type" 
           :url="item.url" class="navigator" hover-class="none">
-          <text class="iconfont icon" v-html="item.icon"></text>
+          <image class="icon" :src="item.icon"></image>
           <text>{{ item.text }}</text>
         </navigator>
       </view>
@@ -206,7 +206,8 @@ page {
       align-items: center;
       justify-content: center;
       .icon{
-        font-size: 50rpx;
+        width: 100rpx;
+        height: 100rpx;
       }
 
       text:nth-child(2){

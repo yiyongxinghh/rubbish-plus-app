@@ -1,10 +1,23 @@
 import { useUserStore } from '@/stores/userStore'
 import axios from "axios";
+import axiosAdapterUniapp from 'axios-adapter-uniapp'
 
-//创建基础的axios实例
+const plat = () => { 
+    switch(uni.getSystemInfoSync().platform){
+        case 'android':
+            return true
+        case 'ios':
+            return true
+        default:
+            return false
+    }
+}
+
+// 判断是否在移动端
 export const http = axios.create({
     baseURL: 'https://server.rubbish-plus.top/',
     timeout: 10000,
+    adapter: (plat() ? axiosAdapterUniapp : null) as any
 })
 
 //配置请求拦截器
