@@ -63,6 +63,7 @@
     "@hyoga/uni-socket.io": "^3.0.4",
     "axios": "^1.6.7",
     "axios-adapter-uniapp": "^0.1.4",
+    "dayjs": "^1.11.10",
     "goeasy": "^2.12.3",
     "mitt": "^3.0.1",
     "pinia": "2.0.27",

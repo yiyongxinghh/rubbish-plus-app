@@ -115,7 +115,6 @@ page {
   background-color: #fff;
 
   .collect-content {
-    margin-top: 80rpx;
     height: calc(100% - 80rpx);
     padding: 0 10rpx;
 

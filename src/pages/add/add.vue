@@ -62,7 +62,6 @@ page {
 
 <style scoped lang="scss">
 .add-container {
-  margin-top: 80rpx;
   height: calc(100% - 80rpx);
   background: linear-gradient(
     to right top,

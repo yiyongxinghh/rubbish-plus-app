@@ -24,7 +24,6 @@ page{
 .comment-container{
   height: 100%;
   .comment-content{
-    margin-top: 80rpx;
     height: calc(100% - 80rpx);
   }
 }

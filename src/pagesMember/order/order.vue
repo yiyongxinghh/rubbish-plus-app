@@ -24,7 +24,6 @@ page {
 .order-container{
   height: 100%;
   .order-content{
-    margin-top: 80rpx;
     height: calc(100% - 80rpx);
   }
 }

@@ -79,8 +79,8 @@ const collect = async (collectionId: number) => {
   }
 };
 //选择
-const change = (item:Collection) => {
-  const { collectionId } = item
+const change = (item: Collection) => {
+  const { collectionId } = item;
   changeCollection.value = collectionId;
 };
 
@@ -109,7 +109,9 @@ const getGarbage = async () => {
 
 onLoad(async () => {
   await Promise.all([getGarbage(), onScrolltolower()]);
-  collectionList.value = await findAllCollectionAPI(user.userDate!.userId) as any
+  collectionList.value = (await findAllCollectionAPI(
+    user.userDate!.userId
+  )) as any;
 });
 </script>
 
@@ -397,7 +399,9 @@ page {
   .content {
     margin-left: -20rpx;
   }
-
+  image {
+    width: 100%;
+  }
   .properties {
     padding: 0 20rpx;
     margin-bottom: 30rpx;

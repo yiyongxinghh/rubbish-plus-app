@@ -157,6 +157,18 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pagesMember/recovery",
+			"pages": [
+				{
+					"path": "recovery",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "回收"
+					}
+				}
+			]
 		}
 	]
 }

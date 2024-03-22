@@ -1,5 +1,5 @@
 <template>
-  <view class="message-container">
+  <view class="message-container" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
     <text class="message-tab">消息</text>
     <view class="message-title">
       <view class="title-item" v-for="item in messageTitle">
@@ -32,6 +32,9 @@ import { getAllMessageByUserIdAPI } from "@/services/message";
 import { useUserStore } from "@/stores/userStore";
 import {  onShow } from "@dcloudio/uni-app";
 import {  ref } from "vue";
+//获取屏幕边界到安全区域距离
+const { safeAreaInsets } = uni.getSystemInfoSync()
+
 const { userDate } = useUserStore();
 
 //聊天列表

@@ -1,6 +1,12 @@
 import { http } from "@/utils/http"
-import type { Garbage } from "@/types/global"
+import type { Garbage, Order } from "@/types/global"
 import type { CategoryItem } from "@/types/shop"
+
+interface GarbageItem {
+    id: number;
+    quantity: number;
+}
+
 
 /**
  * 获取分类
@@ -33,5 +39,35 @@ export const getGarbageAPI = (id: number) => {
     return http<Garbage>({
         method: 'GET',
         url: `/garbage/${id}`
+    })
+}
+
+/**
+ * 创建购买订单
+ * @param order 
+ * @param garbage 
+ * @returns 
+ */
+export const createOrderAPI = (order: Order, garbage: GarbageItem[]) => {
+    return http({
+        method: 'POST',
+        url: '/order',
+        data: {
+            order,
+            garbage
+        }
+    })
+}
+
+/**
+ * 创建回收订单
+ * @param order 
+ * @returns 
+ */
+export const createRecoverOrderAPI = (order: Order) => {
+    return http({
+        method: 'POST',
+        url: '/order/recover',
+        data: order
     })
 }

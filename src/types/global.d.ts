@@ -68,3 +68,16 @@ export type Collection = {
     collectionName: string,
     user: number
 }
+
+
+//订单类型
+export type Order = {
+    orderId?: number,
+    orderDate: Date,
+    orderIsSign: boolean,
+    orderAddress:string,
+    orderMoney: number,
+    orderDescription: string,
+    Recipient: number,
+    Deliveryman:number
+}
