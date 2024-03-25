@@ -90,3 +90,22 @@ export const findAllUserCommentsAPI = (userId:number)=>{
       url:`/comment/user/${userId}`  
     })
 }   
+
+/**
+ * 获取用户所有订单，自带分页
+ * @param userId 
+ * @param userRank 
+ * @param page 
+ * @param pageSize 
+ * @returns 
+ */
+export const findUserAllOrderAPI = (userId:number,userRank:number)=>{
+    return http({
+        method:'POST',
+        url:`/order/findUserAllOrder`,
+        data:{
+            userId,
+            userRank
+        }
+    })
+}

@@ -12,12 +12,12 @@ const count = ref(1);
 
 <template>
   <view class="service-panel">
-    <!-- 关闭按钮 -->
-    <text class="close icon-close iconfont" @click="emit('close')"
-      >&#xe623;</text
-    >
     <!-- 标题 -->
-    <view class="title">选择数量</view>
+    <view class="title">
+      <text class="text">选择数量</text>
+      <!-- 关闭按钮 -->
+      <text class="close iconfont" @click="emit('close')">&#xe623;</text>
+    </view>
     <!-- 内容 -->
     <view class="content">
       <view class="item">
@@ -46,21 +46,24 @@ const count = ref(1);
 }
 
 .title {
-  line-height: 1;
+  display: flex;
+  position: relative;
+  align-items: center;
   padding: 40rpx 0;
   text-align: center;
   font-size: 32rpx;
   font-weight: normal;
   border-bottom: 1rpx solid #ddd;
   color: #444;
-}
-
-.close {
-  position: absolute;
-  transform: rotateZ(45deg);
-  font-size: 58rpx;
-  right: 24rpx;
-  top: 24rpx;
+  .text {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+  }
+  .close {
+    transform: rotate(45deg);
+    font-size: 58rpx;
+  }
 }
 
 .content {

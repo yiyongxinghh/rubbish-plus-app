@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref,computed } from "vue";
 import { useUserStore } from "@/stores/userStore";
 import { updateAddressAPI } from "@/services/setting";
 import type { User } from "@/types/global";
@@ -7,23 +7,52 @@ import type { User } from "@/types/global";
 const userStore = useUserStore();
 
 //地址弹出层
-const addressPopup = ref()
+const addressPopup = ref();
+const changePopup = ref();
 
 //登出
 const logOut = () => {
-  userStore.clearToken()
-  userStore.clearUserData()
+  userStore.clearToken();
+  userStore.clearUserData();
   uni.navigateTo({ url: "/pages/login/login" });
   uni.showToast({ title: "退出登录" });
-}
+};
+
+const rankContent = computed(() => {
+  if (userStore.userDate!.userRank === 1 && userStore.userCurrentRank === 0) {
+    return "是否转换为配送者";
+  } else if (userStore.userDate!.userRank === 1 && userStore.userCurrentRank === 1) {
+    return "是否转换为普通用户";
+  } else {
+    return "无法进行身份转换";
+  }
+})
+
+//转换分级
+const changeUserRank = () => {
+  const userRank = userStore.userDate!.userRank;
+  if (userRank === 0||userRank === 2) {
+    uni.showToast({ title: "无法进行身份转换",icon:"error"});
+  } else if (userRank === 1) {
+    if (userStore.userCurrentRank === 0) {
+      userStore.changeCurrentRank(1);
+      uni.showToast({ title: "成功转换为配送者" });
+    } else if (userStore.userCurrentRank === 1) {
+      userStore.changeCurrentRank(0);
+      uni.showToast({ title: "成功转换为普通用户" });
+    }
+  }
+};
 
 //确认地址
-const confirmAddress:UniHelper.UniPopupDialogOnConfirm = async (val) => {
-  userStore.userDate!.userAddress = String(val)
-  const res = await updateAddressAPI(userStore.userDate!.userId,userStore.userDate as User)
+const confirmAddress: UniHelper.UniPopupDialogOnConfirm = async (val) => {
+  userStore.userDate!.userAddress = String(val);
+  const res = await updateAddressAPI(
+    userStore.userDate!.userId,
+    userStore.userDate as User
+  );
   console.log(res);
-}
-
+};
 </script>
 
 <template>
@@ -37,7 +66,12 @@ const confirmAddress:UniHelper.UniPopupDialogOnConfirm = async (val) => {
     </view>
     <!-- 列表2 -->
     <view class="list">
-      <button hover-class="none" class="item arrow" open-type="openSetting">
+      <button
+        hover-class="none"
+        class="item arrow"
+        open-type="openSetting"
+        @click="changePopup.open()"
+      >
         <text>授权管理</text>
         <text class="iconfont icon">&#xe663;</text>
       </button>
@@ -62,8 +96,20 @@ const confirmAddress:UniHelper.UniPopupDialogOnConfirm = async (val) => {
       <view class="button" @click="logOut">退出登录</view>
     </view>
     <uni-popup ref="addressPopup" type="dialog">
-      <uni-popup-dialog mode="input" title="修改地址" :duration="2000" value=""
-        @confirm="confirmAddress"></uni-popup-dialog>
+      <uni-popup-dialog
+        mode="input"
+        title="修改地址"
+        value=""
+        @confirm="confirmAddress"
+      ></uni-popup-dialog>
+    </uni-popup>
+
+    <uni-popup ref="changePopup" type="dialog">
+      <uni-popup-dialog
+        title="转换分级"
+        :content=rankContent
+        @confirm="changeUserRank"
+      ></uni-popup-dialog>
     </uni-popup>
   </view>
 </template>
@@ -111,8 +157,6 @@ page {
     &:first-child {
       border: none;
     }
-
-
   }
 
   .arrow {
@@ -125,7 +169,6 @@ page {
       font-size: 48rpx;
       transform: rotateZ(90deg);
     }
-
   }
 }
 

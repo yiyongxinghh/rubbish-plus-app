@@ -1,17 +1,18 @@
 <script setup lang="ts">
 //子调父
 const emit = defineEmits<{
-    (event:'close'):void
+  (event: "close"): void;
 }>();
-
 </script>
 
 <template>
   <view class="service-panel">
-    <!-- 关闭按钮 -->
-    <text class="close icon-close iconfont" @click="emit('close')">&#xe623;</text>
     <!-- 标题 -->
-    <view class="title">服务说明</view>
+    <view class="title">
+      <text class="text">服务说明</text>
+      <!-- 关闭按钮 -->
+      <text class="close iconfont" @click="emit('close')">&#xe623;</text>
+    </view>
     <!-- 内容 -->
     <view class="content">
       <view class="item">
@@ -41,26 +42,29 @@ const emit = defineEmits<{
 .service-panel {
   padding: 0 30rpx;
   border-radius: 10rpx 10rpx 0 0;
-  position: relative;
+  
   background-color: #fff;
 }
 
 .title {
-  line-height: 1;
+  display: flex;
+  position: relative;
+  align-items: center;
   padding: 40rpx 0;
   text-align: center;
   font-size: 32rpx;
   font-weight: normal;
   border-bottom: 1rpx solid #ddd;
   color: #444;
-}
-
-.close {
-  position: absolute;
-  transform: rotateZ(45deg);
-  font-size: 58rpx;
-  right: 24rpx;
-  top: 24rpx;
+  .text {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+  }
+  .close {
+    transform: rotate(45deg);
+    font-size: 58rpx;
+  }
 }
 
 .content {
@@ -78,7 +82,7 @@ const emit = defineEmits<{
     position: relative;
 
     &::before {
-      content: '';
+      content: "";
       width: 10rpx;
       height: 10rpx;
       border-radius: 50%;

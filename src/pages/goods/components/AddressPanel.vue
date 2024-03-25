@@ -1,28 +1,34 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores/userStore";
-const {userDate} = useUserStore();
+const { userDate } = useUserStore();
 //子调父
 const emit = defineEmits<{
-    (event:'close',value:number|string):void
+  (event: "close", value?: number | string): void;
 }>();
 </script>
 
 <template>
   <view class="address-panel">
-    <!-- 关闭按钮 -->
-    <text class="close icon-close iconfont" @click="emit('close')">&#xe623;</text>
     <!-- 标题 -->
-    <view class="title">配送至</view>
+    <view class="title">
+      <text class="text">配送至</text>
+      <!-- 关闭按钮 -->
+      <text class="close iconfont" @click="emit('close')">&#xe623;</text>
+    </view>
     <!-- 内容 -->
     <view class="content">
       <view class="item">
-        <view class="user">{{ userDate.userName }} {{ userDate.userPhone }}</view>
+        <view class="user"
+          >{{ userDate.userName }} {{ userDate.userPhone }}</view
+        >
         <view class="address">{{ userDate.userAddress }}</view>
         <text class="icon icon-ring"></text>
       </view>
     </view>
     <view class="footer">
-      <view class="button primary" @click="emit('close',userDate.userAddress)">确定</view>
+      <view class="button primary" @click="emit('close', userDate.userAddress)"
+        >确定</view
+      >
     </view>
   </view>
 </template>
@@ -36,21 +42,24 @@ const emit = defineEmits<{
 }
 
 .title {
-  line-height: 1;
+  display: flex;
+  position: relative;
+  align-items: center;
   padding: 40rpx 0;
   text-align: center;
   font-size: 32rpx;
   font-weight: normal;
   border-bottom: 1rpx solid #ddd;
   color: #444;
-}
-
-.close {
-  position: absolute;
-  transform: rotateZ(45deg);
-  font-size: 58rpx;
-  right: 24rpx;
-  top: 24rpx;
+  .text {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+  }
+  .close {
+    transform: rotate(45deg);
+    font-size: 58rpx;
+  }
 }
 
 .content {

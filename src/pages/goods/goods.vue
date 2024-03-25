@@ -1,16 +1,19 @@
 <script setup lang="ts">
+import dayjs from "dayjs";
 import { onLoad } from "@dcloudio/uni-app";
 import { getGarbageAPI } from "@/services/shop";
 import {
   insertGarbageToCollectionAPI,
   findAllCollectionAPI,
 } from "@/services/user";
+import { sendCommentAPI, findAllGarbagCommentsAPI } from "@/services/comment";
 import { reactive, ref } from "vue";
 import { useUserStore } from "@/stores/userStore";
-import type { Garbage, Collection } from "@/types/global";
+import type { Garbage, Collection, Comment, User } from "@/types/global";
 import AddressPanel from "./components/AddressPanel.vue";
 import ServicePanel from "./components/ServicePanel.vue";
 import CountPanel from "./components/CountPanel.vue";
+import CommentPanel from "./components/CommentPanel.vue";
 
 //获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync();
@@ -36,18 +39,38 @@ const popup = ref<{
   close: () => void;
 }>();
 //弹出层条件渲染
-const popupName = ref<"address" | "service" | "count" | "collect">();
+const popupName = ref<"address" | "service" | "count" | "comment">();
 const openPopup = (name: typeof popupName.value) => {
   popupName.value = name;
   popup.value?.open();
 };
-const colsePopup = (value: number | string) => {
+//关闭弹出层后执行部分逻辑
+const colsePopup = async (value: number | string | object) => {
   switch (popupName.value) {
     case "address":
       formData.address = value as string;
       break;
     case "count":
       formData.count = value as number;
+      break;
+    case "comment":
+      readDetail.value = false;
+      commentDetail.value = null;
+      if (!value) {
+        break;
+      }
+      const comment = value as Comment;
+      if (comment.commentContent === "") {
+        return uni.showToast({
+          title: "请输入评论内容",
+          icon: "none",
+        });
+      }
+      comment.garbage = parseInt(query.id);
+      comment.user = user.userDate!.userId;
+
+      await sendCommentAPI(comment);
+      await findAllGarbagComments();
       break;
   }
   popup.value?.close();
@@ -69,9 +92,12 @@ const chat = (userId: number) => {
 const changeCollection = ref();
 const collectionList = ref<Collection[]>([]);
 //收藏
-const collect = async (collectionId: number) => {
+const collect = async () => {
   try {
-    await insertGarbageToCollectionAPI(collectionId, parseInt(query.id));
+    await insertGarbageToCollectionAPI(
+      changeCollection.value,
+      parseInt(query.id)
+    );
   } catch (error) {
     uni.showToast({
       title: " 收藏失败",
@@ -80,8 +106,7 @@ const collect = async (collectionId: number) => {
 };
 //选择
 const change = (item: Collection) => {
-  const { collectionId } = item;
-  changeCollection.value = collectionId;
+  changeCollection.value = item.collectionId;
 };
 
 //立即购买
@@ -107,8 +132,25 @@ const getGarbage = async () => {
   garbage.value = data;
 };
 
+//评论列表
+const commentList = ref<Comment[]>([]);
+//获取指定废品所有评论
+const findAllGarbagComments = async () => {
+  const { data } = await findAllGarbagCommentsAPI(+query.id);
+  commentList.value = data;
+};
+
+//是否阅读评论详情
+const readDetail = ref(false);
+const commentDetail = ref();
+const openReadDetail = (comment: Comment) => {
+  openPopup("comment");
+  commentDetail.value = comment;
+  readDetail.value = true;
+};
+
 onLoad(async () => {
-  await Promise.all([getGarbage(), onScrolltolower()]);
+  await Promise.all([getGarbage(), onScrolltolower(), findAllGarbagComments()]);
   collectionList.value = (await findAllCollectionAPI(
     user.userDate!.userId
   )) as any;
@@ -197,17 +239,21 @@ onLoad(async () => {
     <view class="comment panel">
       <view class="title">
         <text>评价</text>
-        <text class="send">发送</text>
+        <text class="send" @click="openPopup('comment')">发送</text>
       </view>
       <view class="content">
         <uni-list :border="true">
           <!-- 显示圆形头像 -->
           <uni-list-chat
-            title="uni-app"
-            avatar="https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png"
-            note="您收到一条新的消息"
-            time="2020-02-02 20:20"
-          ></uni-list-chat>
+            v-for="comment in commentList"
+            :title="(comment.user as User)?.userName"
+            :avatar="(comment.user as User)?.pic.picUrl"
+            :note="comment.commentContent"
+            clickable
+            @click="openReadDetail(comment)"
+            :time="dayjs(comment.commentTime).format('YYYY-MM-DD HH:mm:ss') as string"
+          >
+          </uni-list-chat>
         </uni-list>
       </view>
     </view>
@@ -229,10 +275,16 @@ onLoad(async () => {
   </view>
 
   <!-- 弹出层 -->
-  <uni-popup ref="popup" type="bottom" background-color="#fff">
+  <uni-popup ref="popup" type="bottom" background-color="#fff" :mask-click="false">
     <AddressPanel v-if="popupName === 'address'" @close="colsePopup" />
     <ServicePanel v-if="popupName === 'service'" @close="colsePopup" />
     <CountPanel v-if="popupName === 'count'" @close="colsePopup" />
+    <CommentPanel
+      v-if="popupName === 'comment'"
+      @close="colsePopup"
+      :readDetail="readDetail"
+      :commentDetail="commentDetail"
+    />
   </uni-popup>
 
   <uni-drawer ref="showLeft" mode="left" :width="320" @close="collect()">
@@ -431,6 +483,16 @@ page {
   .title {
     .send {
       border: none;
+    }
+  }
+  .comment-item {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: space-between;
+    .time {
+      font-size: 22rpx;
+      color: #ccc;
     }
   }
 }

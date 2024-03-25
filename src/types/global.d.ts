@@ -36,8 +36,10 @@ export type Pic = {
 export type Comment = {
     commentId: number,
     commentContent: string,
-    commenScore: number,
+    commentScore: number,
     commentTime: string,
+    user: number | User,
+    garbage: number | Garbage
 }
 
 //分类类型
@@ -75,9 +77,9 @@ export type Order = {
     orderId?: number,
     orderDate: Date,
     orderIsSign: boolean,
-    orderAddress:string,
+    orderAddress: string,
     orderMoney: number,
     orderDescription: string,
     Recipient: number,
-    Deliveryman:number
+    Deliveryman?: number
 }

@@ -7,6 +7,8 @@ export const useUserStore = defineStore('user', () => {
     const userDate = ref<User | null>(null)
     //token
     const userToken = ref('')
+    //当前的用户分级
+    const userCurrentRank = ref(0);
     //保存token
     const saveToken = (token:string) => {
         userToken.value = token
@@ -26,13 +28,20 @@ export const useUserStore = defineStore('user', () => {
     const clearUserData = () => {
         userDate.value = null
     }
+
+    //切换用户分级
+    const changeCurrentRank = (data:number) => {
+        userCurrentRank.value = data
+    }
     return {
         userDate,
         userToken,
+        userCurrentRank,
         saveToken,
         clearToken,
         saveUserData,
-        clearUserData
+        clearUserData,
+        changeCurrentRank
     }
 },
     {

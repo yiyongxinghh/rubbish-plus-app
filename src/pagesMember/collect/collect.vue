@@ -19,43 +19,22 @@
           @confirm="dialogInputConfirm"
         ></uni-popup-dialog>
       </uni-popup>
-      <view class="collect-list">
-        <uni-collapse accordion>
-          <uni-collapse-item :title="collection.collectionName" :border="false" v-for="collection in collectionList">
-            <view class="collect-item">
-              <image
-                src="https://server.rubbish-plus.top/files/1708689963958.jpg"
-                mode="aspectFill"
-              />
-              <view class="collect-detail">
-                <text>XXX</text>
-                <text>库存 : XXX</text>
-                <text>￥666</text>
-              </view>
-            </view>
-          </uni-collapse-item>
-          <uni-collapse-item title="收藏夹2">
-            <view class="collect-item">
-              <image
-                src="https://server.rubbish-plus.top/files/1708689963958.jpg"
-                mode="aspectFill"
-              />
-              <view class="collect-detail">
-                <text>XXX</text>
-                <text>库存 : XXX</text>
-                <text>￥666</text>
-              </view>
-            </view>
-          </uni-collapse-item>
-        </uni-collapse>
-      </view>
+      <uni-collapse accordion>
+        <uni-collapse-item
+          :title="collection.collectionName"
+          :border="false"
+          v-for="collection in collectionList"
+        >
+        <RpGood v-for="good in collection?.collectionToGarbages" :good="good"/>
+        </uni-collapse-item>
+      </uni-collapse>
     </view>
   </view>
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { createCollectionAPI,findAllCollectionAPI } from "@/services/user";
+import { createCollectionAPI, findAllCollectionAPI } from "@/services/user";
 import { useUserStore } from "@/stores/userStore";
 import { onLoad } from "@dcloudio/uni-app";
 import type { Collection } from "@/types/global";
@@ -78,7 +57,7 @@ const dialogInputConfirm = async (val: string) => {
         collectionName: val,
         user: userDate?.userId as number,
       });
-      await requestCollections()
+      await requestCollections();
       return uni.showToast({
         title: "创建成功",
       });
@@ -96,13 +75,14 @@ const dialogInputConfirm = async (val: string) => {
   }
 };
 
-const requestCollections = async ()=>{
-  collectionList.value = await findAllCollectionAPI(userDate?.userId as number) as any;
-}
+const requestCollections = async () => {
+  const { data } = await findAllCollectionAPI(userDate?.userId as number);
+  collectionList.value = data;
+};
 
-onLoad(async ()=>{
-  await requestCollections()
-})
+onLoad(async () => {
+  await requestCollections();
+});
 </script>
 
 <style scoped lang="scss">
@@ -137,49 +117,6 @@ page {
       & text:nth-child(2) {
         font-size: 40rpx;
         font-weight: bold;
-      }
-    }
-
-    .collect-list {
-      .collect-item {
-        width: 100%;
-        height: 200rpx;
-        box-sizing: border-box;
-        padding: 10rpx;
-        border: 2rpx solid #f5f5f5;
-        border-radius: 10rpx;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        image {
-          width: 320rpx;
-          height: 100%;
-          border-radius: 10rpx;
-        }
-
-        .collect-detail {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          align-items: center;
-          height: 100%;
-
-          & text:nth-child(1) {
-            font-size: 26rpx;
-            font-weight: bolder;
-          }
-
-          & text:nth-child(2) {
-            font-size: 20rpx;
-            color: #ccc;
-          }
-
-          & text:nth-child(3) {
-            font-size: 28rpx;
-            color: rgb(231, 39, 39);
-          }
-        }
       }
     }
   }
