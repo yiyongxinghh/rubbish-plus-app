@@ -1,5 +1,10 @@
 import { http } from "@/utils/http"
-import type { Collection } from "@/types/global"
+import type { Collection, Order } from "@/types/global"
+
+export interface GarbageItem {
+    id: number;
+    quantity: number;
+}
 
 /**
  * 创建收藏夹
@@ -33,8 +38,8 @@ export const removeCollectionAPI = (id: number) => {
  */
 export const findAllCollectionAPI = (userId: number) => {
     return http({
-        method:'GET',
-        url:`/collection/${userId}`
+        method: 'GET',
+        url: `/collection/${userId}`
     })
 }
 
@@ -44,10 +49,11 @@ export const findAllCollectionAPI = (userId: number) => {
  * @param garbage 
  * @returns 
  */
-export const insertGarbageToCollectionAPI = (collection:number,garbage:number)=>{
+export const insertGarbageToCollectionAPI = (collectionToGarbage:any) => {
     return http({
-        method:'POST',
-        url:'/collection-to-garbage'
+        method: 'POST',
+        url: '/collection-to-garbage',
+        data:collectionToGarbage
     })
 }
 
@@ -56,10 +62,10 @@ export const insertGarbageToCollectionAPI = (collection:number,garbage:number)=>
  * @param collectionId 
  * @returns 
  */
-export const findCollectionAPI = (collectionId:number)=>{
+export const findCollectionAPI = (collectionId: number) => {
     return http({
-        method:'GET',
-        url:`/collection-to-garbage/${collectionId}` 
+        method: 'GET',
+        url: `/collection-to-garbage/${collectionId}`
     })
 }
 
@@ -69,12 +75,12 @@ export const findCollectionAPI = (collectionId:number)=>{
  * @param garbageId 
  * @returns 
  */
-export const removeGarbageFromCollectionAPI = (collectionId:number,garbageId:number)=>{
+export const removeGarbageFromCollectionAPI = (collectionId: number, garbageId: number) => {
     return http({
-        method:'DELETE',
-        url:'/collection-to-garbage',
-        data:{
-            collectionId,garbageId
+        method: 'DELETE',
+        url: '/collection-to-garbage',
+        data: {
+            collectionId, garbageId
         }
     })
 }
@@ -84,12 +90,12 @@ export const removeGarbageFromCollectionAPI = (collectionId:number,garbageId:num
  * @param userId 
  * @returns 
  */
-export const findAllUserCommentsAPI = (userId:number)=>{
+export const findAllUserCommentsAPI = (userId: number) => {
     return http({
-      method:'GET',
-      url:`/comment/user/${userId}`  
+        method: 'GET',
+        url: `/comment/user/${userId}`
     })
-}   
+}
 
 /**
  * 获取用户所有订单，自带分页
@@ -99,13 +105,87 @@ export const findAllUserCommentsAPI = (userId:number)=>{
  * @param pageSize 
  * @returns 
  */
-export const findUserAllOrderAPI = (userId:number,userRank:number)=>{
+export const findUserAllOrderAPI = (userId: number, userRank: number) => {
     return http({
-        method:'POST',
-        url:`/order/findUserAllOrder`,
-        data:{
+        method: 'POST',
+        url: `/order/findUserAllOrder`,
+        data: {
             userId,
             userRank
         }
+    })
+}
+
+/**
+ * 创建订单
+ * @param order 
+ * @param garbage 
+ * @returns 
+ */
+export const createOrderAPI = (order: Order, garbage: GarbageItem[]) => {
+    return http({
+        method: 'POST',
+        url: `/order`,
+        data: {
+            order,
+            garbage
+        }
+    })
+}
+
+/**
+ * 上传文件
+ * @param {*} file 
+ * @returns 
+ */
+export const uploadAPI = (file: any) => {
+    return http({
+        method: 'POST',
+        url: `/pic/upload`,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        data: file
+    })
+}
+
+/**
+ * 添加废品
+ * @param {*} data 
+ * @returns 
+ */
+export const addGarbageAPI = (data: any) => {
+    return http({
+        method: 'POST',
+        url: '/garbage',
+        data: data
+    })
+}
+
+/**
+ * 用户更新
+ * @param id 
+ * @param user 
+ * @returns 
+ */
+export const updateUserAPI = (id: number, user: any) => {
+    return http({
+        url: `/user/${id}`,
+        method: 'PATCH',
+        data:{
+            user
+        }
+    })
+}
+
+/**
+ * 根据用户id获取用户信息
+ * @param id 
+ * @returns 
+ */
+export const findOneUserAPI = (id: number) => {
+    return http({
+        url: `/user/${id}`,
+        method: 'GET',
     })
 }

@@ -90,6 +90,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, computed } from "vue";
 import type { userData, registerData } from "@/types/login";
+import { showToast } from "@/utils/index";
 import {
   getCodeAPI,
   emailLoginAPI,
@@ -149,13 +150,6 @@ const sendCode = async () => {
   }, 1000);
 };
 
-// 登录提示
-const showToast = (title: string, isSuccess: boolean) => {
-  uni.showToast({
-    title,
-    icon: isSuccess ? "success" : "error",
-  });
-};
 
 //置空
 const empty = () => {

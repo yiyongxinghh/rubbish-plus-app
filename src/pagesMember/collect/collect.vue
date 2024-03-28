@@ -25,7 +25,7 @@
           :border="false"
           v-for="collection in collectionList"
         >
-        <RpGood v-for="good in collection?.collectionToGarbages" :good="good"/>
+        <RpGood v-for="good in collection?.collectionToGarbages" :good="good.garbage"/>
         </uni-collapse-item>
       </uni-collapse>
     </view>
@@ -78,6 +78,8 @@ const dialogInputConfirm = async (val: string) => {
 const requestCollections = async () => {
   const { data } = await findAllCollectionAPI(userDate?.userId as number);
   collectionList.value = data;
+  console.log(collectionList.value);
+  
 };
 
 onLoad(async () => {

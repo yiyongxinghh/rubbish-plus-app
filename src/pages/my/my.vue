@@ -2,8 +2,11 @@
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { onLoad } from '@dcloudio/uni-app'
+import { findOneUserAPI } from '@/services/user'
 // 获取用户信息
 const userStore = useUserStore()
+
+const picUrl = ref()
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -15,9 +18,10 @@ const orderTypes = [
   { type: 4, text: '我的评价', icon: '../../static/my/comment.png' ,url:'/pagesMember/comment/comment'},
 ]
 
-onLoad(()=>{
+onLoad(async ()=>{
   // 获取用户信息
-
+  const {data} = await findOneUserAPI(userStore.userDate!.userId)
+  picUrl.value = data.pic.picUrl
 })
 </script>
 
@@ -28,13 +32,13 @@ onLoad(()=>{
       <!-- 情况1：已登录 -->
       <view class="overview" v-if="userStore.userDate">
         <navigator url="/pagesMember/profile/profile" hover-class="none">
-          <!-- <image class="avatar" mode="aspectFill" :src="userStore.userDate.pic.picUrl"></image> -->
-          <image class="avatar" mode="aspectFill" src="https://server.rubbish-plus.top/files/1708689963958.jpg"></image>
+          <image class="avatar" mode="aspectFill" :src="picUrl"></image>
+          <!-- <image class="avatar" mode="aspectFill" src="https://server.rubbish-plus.top/files/1708689963958.jpg"></image> -->
         </navigator>
         <view class="meta">
           <view class="nickname">{{ userStore.userDate.userName }}</view>
-          <navigator class="extra" url="/pagesMember/profile/profile" hover-class="none">
-            <text class="update">更新头像昵称</text>
+          <navigator class="extra" :url="`/pagesMember/profile/profile?id=${userStore.userDate.userId }`" hover-class="none">
+            <text class="update">修改个人信息</text>
           </navigator>
         </view>
       </view>

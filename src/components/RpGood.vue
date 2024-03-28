@@ -1,19 +1,35 @@
 <template>
-  <view class="collect-item">
-    <image
-      src="https://server.rubbish-plus.top/files/1708689963958.jpg"
-      mode="aspectFill"
-    />
+  <view class="collect-item" @click="toGood()">
+    <image :src="garbage.pic.picUrl" mode="aspectFill" />
     <view class="collect-detail">
-      <text>XXX</text>
-      <text>库存 : XXX</text>
-      <text>￥666</text>
+      <text>{{ good.garbageName }}</text>
+      <text>库存 : {{ good.garbageAmount }}</text>
+      <text>￥{{ good.garbagePrice }}</text>
     </view>
   </view>
 </template>
 
-<script setup>
-defineProps(['good'])
+<script setup lang="ts">
+import { onLoad } from "@dcloudio/uni-app";
+import { ref } from "vue";
+import { getGarbageAPI } from "@/services/shop";
+const props = defineProps(["good"]);
+
+const garbage = ref();
+
+const getGarbage = async () => {
+  const { data } = await getGarbageAPI(props.good.garbageId);
+  console.log(data)
+  garbage.value = data;
+};
+
+const toGood = () => {
+  uni.navigateTo({ url: "/pages/goods/goods?id=" + props.good.garbageId });
+}
+
+onLoad(async () => {
+  await getGarbage();
+});
 </script>
 
 <style scoped lang="scss">

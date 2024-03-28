@@ -169,6 +169,18 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pagesMember/profile",
+			"pages": [
+				{
+					"path": "profile",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "修改个人信息"
+					}
+				}
+			]
 		}
 	]
 }

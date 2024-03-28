@@ -17,12 +17,12 @@ const goMore = () => {
     <view class="hot">
       <view class="item" v-for="(item, index) in hotList" :key="index">
         <view class="title">
-          <text class="title-desc">{{ item[0].garbageName }}</text>
-          <text class="title-desc">{{ item[1].garbageName }}</text>
+          <text class="title-desc">{{ item[0]?.garbageName }}</text>
+          <text class="title-desc">{{ item[1]?.garbageName }}</text>
         </view>
         <navigator class="space" hover-class="none" :url="`/pages/hot/hot`">
-          <image class="image" mode="aspectFit" :src="item[0].pic.picUrl"></image>
-          <image class="image" mode="aspectFit" :src="item[1].pic.picUrl"></image>
+          <image class="image" mode="aspectFit" :src="item[0]?.pic.picUrl"></image>
+          <image class="image" mode="aspectFit" :src="item[1]?.pic.picUrl"></image>
         </navigator>
       </view>
     </view>

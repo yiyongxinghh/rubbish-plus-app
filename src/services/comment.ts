@@ -38,3 +38,18 @@ export const deleteCommentAPI = (commentId:number) => {
         url:`/comment/${commentId}`,
     })
 }
+
+/**
+ * 获取指定用户所有评论
+ * @param userId 
+ * @returns 
+ */
+export const findAllUserCommentsAPI = (userId:number) => {
+    return http<Comment[]>({
+        method: 'GET',
+        url: `/comment/user`,
+        params: {
+            userId
+        }
+    })
+}

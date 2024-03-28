@@ -56,7 +56,12 @@ const emit = defineEmits<{
       </view>
     </view>
     <view class="footer">
-      <view v-if="!readDetail" class="button primary" @click="emit('close',fromData)">确定</view>
+      <view
+        v-if="!readDetail"
+        class="button primary"
+        @click="emit('close', fromData)"
+        >确定</view
+      >
       <view v-else class="button primary" @click="emit('close')">确定</view>
     </view>
   </view>
@@ -103,6 +108,10 @@ const emit = defineEmits<{
     align-items: center;
     justify-content: space-between;
     margin-bottom: 30rpx;
+    text{
+      font-size: 24rpx;
+      width: 100rpx;
+    }
     .text {
       border-radius: 10rpx;
       border: 1rpx solid #ddd;

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
 import { onLoad } from "@dcloudio/uni-app";
+import { showToast } from "@/utils/index";
 import { getGarbageAPI } from "@/services/shop";
 import {
   insertGarbageToCollectionAPI,
   findAllCollectionAPI,
+  createOrderAPI,
 } from "@/services/user";
 import { sendCommentAPI, findAllGarbagCommentsAPI } from "@/services/comment";
 import { reactive, ref } from "vue";
@@ -29,6 +31,13 @@ const formData = reactive({
   count: 0,
   address: "",
 });
+
+//获取商品信息
+const garbage = ref<Garbage>();
+const getGarbage = async () => {
+  const { data } = await getGarbageAPI(+query.id);
+  garbage.value = data;
+};
 
 //抽屉
 const showLeft = ref();
@@ -93,15 +102,20 @@ const changeCollection = ref();
 const collectionList = ref<Collection[]>([]);
 //收藏
 const collect = async () => {
-  try {
-    await insertGarbageToCollectionAPI(
-      changeCollection.value,
-      parseInt(query.id)
-    );
-  } catch (error) {
-    uni.showToast({
-      title: " 收藏失败",
-    });
+  if (changeCollection.value) {
+    try {
+      await insertGarbageToCollectionAPI({
+        collection: changeCollection.value,
+        garbage: query.id,
+      });
+      uni.showToast({
+        title: "收藏成功",
+      });
+    } catch (error) {
+      uni.showToast({
+        title: "收藏失败",
+      });
+    }
   }
 };
 //选择
@@ -109,8 +123,18 @@ const change = (item: Collection) => {
   changeCollection.value = item.collectionId;
 };
 
+const order = reactive({
+  orderDate: new Date(),
+  orderIsSign: false,
+  orderAddress: formData.address,
+  orderMoney: 0,
+  orderDescription: "",
+  Recipient: user.userDate!.userId,
+});
+const garbageOrderList: any = ref([]);
+
 //立即购买
-const buyNow = () => {
+const buyNow = async () => {
   if (formData.count === 0) {
     return uni.showToast({
       title: "请选择购买数量",
@@ -123,13 +147,14 @@ const buyNow = () => {
       icon: "none",
     });
   }
-};
-
-//获取商品信息
-const garbage = ref<Garbage>();
-const getGarbage = async () => {
-  const { data } = await getGarbageAPI(+query.id);
-  garbage.value = data;
+  order.orderMoney = garbage.value!.garbagePrice * formData.count;
+  garbageOrderList.value.push({
+    id: garbage.value!.garbageId,
+    quantity: formData.count,
+  });
+  const { data } = await createOrderAPI(order, garbageOrderList.value);
+  data ? showToast(data) : showToast('购买成功',true)
+  
 };
 
 //评论列表
@@ -137,6 +162,8 @@ const commentList = ref<Comment[]>([]);
 //获取指定废品所有评论
 const findAllGarbagComments = async () => {
   const { data } = await findAllGarbagCommentsAPI(+query.id);
+  console.log(data);
+
   commentList.value = data;
 };
 
@@ -151,9 +178,8 @@ const openReadDetail = (comment: Comment) => {
 
 onLoad(async () => {
   await Promise.all([getGarbage(), onScrolltolower(), findAllGarbagComments()]);
-  collectionList.value = (await findAllCollectionAPI(
-    user.userDate!.userId
-  )) as any;
+  const { data } = await findAllCollectionAPI(user.userDate!.userId);
+  collectionList.value = data;
 });
 </script>
 
@@ -247,7 +273,6 @@ onLoad(async () => {
           <uni-list-chat
             v-for="comment in commentList"
             :title="(comment.user as User)?.userName"
-            :avatar="(comment.user as User)?.pic.picUrl"
             :note="comment.commentContent"
             clickable
             @click="openReadDetail(comment)"
@@ -275,7 +300,12 @@ onLoad(async () => {
   </view>
 
   <!-- 弹出层 -->
-  <uni-popup ref="popup" type="bottom" background-color="#fff" :mask-click="false">
+  <uni-popup
+    ref="popup"
+    type="bottom"
+    background-color="#fff"
+    :mask-click="false"
+  >
     <AddressPanel v-if="popupName === 'address'" @close="colsePopup" />
     <ServicePanel v-if="popupName === 'service'" @close="colsePopup" />
     <CountPanel v-if="popupName === 'count'" @close="colsePopup" />
@@ -287,13 +317,13 @@ onLoad(async () => {
     />
   </uni-popup>
 
-  <uni-drawer ref="showLeft" mode="left" :width="320" @close="collect()">
+  <uni-drawer ref="showLeft" mode="left" :width="320" @change="collect()">
     <scroll-view scroll-y class="close">
       <uni-list>
         <uni-list-item
           clickable
-          title="列表文字"
-          :rightText="changeCollection === index ? '已选择' : ''"
+          :title="item.collectionName"
+          :rightText="changeCollection === item.collectionId ? '已选择' : ''"
           v-for="item in collectionList"
           @click="change(item)"
         />
