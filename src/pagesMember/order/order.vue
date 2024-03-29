@@ -20,7 +20,7 @@
               :note="`购买数量${garbage.garbageQuantity}`"
               :rightText="order.orderIsSign ? '已签收' : '未签收'"
               clickable
-              @click="open(order.orderId)"
+              @click="open(order)"
             />
           </uni-list>
           <uni-list v-else>
@@ -28,7 +28,7 @@
               :title="order.orderDescription"
               :rightText="order.orderIsSign ? '已签收' : '未签收'"
               clickable
-              @click="open(order.orderId)"
+              @click="open(order)"
             />
           </uni-list>
         </uni-collapse-item>
@@ -44,6 +44,7 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
 import { findUserAllOrderAPI } from "@/services/user";
+import { updateOrderApI } from "@/services/shop";
 import { onLoad } from "@dcloudio/uni-app";
 import { useUserStore } from "@/stores/userStore";
 import { ref } from "vue";
@@ -56,23 +57,25 @@ const orderId = ref()
 const orderList = ref([]);
 const findUserAllOrder = async () => {
   const { data } = await findUserAllOrderAPI(
-    userDate.userId,
-    userDate.userRank,
-    "",
-    ""
+    userDate!.userId,
+    userDate!.userRank,
   );
   console.log(data);
 
   orderList.value = data;
 };
 
-const open = (id: number)=>{
-  orderId.value = id
+const open = (order:any)=>{
+  console.log(order);
+  orderId.value = order.orderId
   popup.value.open()
 }
 
 //签收
-const isSign = () => {};
+const isSign = async () => {
+  await updateOrderApI(orderId.value, {orderIsSign:true});
+  await findUserAllOrder();
+};
 
 onLoad(async () => {
   await findUserAllOrder();

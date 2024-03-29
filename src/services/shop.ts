@@ -82,3 +82,32 @@ export const findNullDeliveryman = ()=>{
         url: '/order/nullDeliveryman'
     })
 }
+
+/**
+ * 更新订单状态
+ * @param id 
+ * @param order 
+ * @returns 
+ */
+export const updateOrderApI = (id:number,order:any)=>{
+    return http({
+        method: 'PATCH',
+        url: `/order/${id}`,
+        data:order
+    })
+}
+
+/**
+ * 模糊查询废品名
+ * @param name 
+ * @returns 
+ */
+export const getNameGarbageAPI = (name:string)=>{
+    return http({
+        method: 'GET',
+        url: `/garbage/name`,
+        params:{
+            name
+        }
+    })
+}

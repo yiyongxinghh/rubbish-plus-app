@@ -189,3 +189,25 @@ export const findOneUserAPI = (id: number) => {
         method: 'GET',
     })
 }
+
+/**
+ * 获取所有用户
+ * @returns 
+ */
+export const findAllUserAPI = () => {
+    return http({
+        url: `/user`,
+        method: 'GET',
+    })
+}
+
+/**
+ * 获取所有用户废品数据
+ * @returns 
+ */
+export const getUserGarbgaeAPI = () => {
+    return http({
+        url: `/user/getUserGarbage`,
+        method:'GET'
+    })
+}

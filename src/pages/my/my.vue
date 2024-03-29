@@ -31,7 +31,7 @@ onLoad(async ()=>{
     <view class="profile" :style="{ paddingTop: safeAreaInsets!.top + 'px' }">
       <!-- 情况1：已登录 -->
       <view class="overview" v-if="userStore.userDate">
-        <navigator url="/pagesMember/profile/profile" hover-class="none">
+        <navigator :url="`/pagesMember/profile/profile?id=${userStore.userDate.userId }`" hover-class="none">
           <image class="avatar" mode="aspectFill" :src="picUrl"></image>
           <!-- <image class="avatar" mode="aspectFill" src="https://server.rubbish-plus.top/files/1708689963958.jpg"></image> -->
         </navigator>

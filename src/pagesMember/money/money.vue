@@ -7,14 +7,15 @@
         <text class="iconfont">&#xe620;</text>
         <text>钱包</text>
       </view>
-      <text>{{ userStore.userDate.userAmount.toFixed(2) }}</text>
+      <text>{{ userDate!.userAmount.toFixed(2) }}</text>
     </view>
   </view>
 </template>
 
 <script lang="ts" setup>
 import { useUserStore } from '@/stores/userStore'
-const userStore = useUserStore()
+const {userDate} = useUserStore()
+console.log(userDate!.userAmount);
 </script>
 
 <style scoped lang="scss">

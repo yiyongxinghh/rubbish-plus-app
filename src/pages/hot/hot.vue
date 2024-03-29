@@ -5,10 +5,13 @@ import { getHomeHotAPI } from '@/services/home'
 import { getSoldOutGarbageAPI } from '@/services/hot'
 import type { Garbage } from '@/types/global'
 
+const query = defineProps(['id'])
+
 //获取热门推荐数据
 const gaebageList = ref<Garbage[]>([])
 const getGaebageList = async () => {
   const res = await getHomeHotAPI()
+  console.log(res);
   gaebageList.value = res.data.reduce((result, currentArray) => result.concat(currentArray), []) as Garbage[];
 }
 
@@ -23,14 +26,16 @@ const handleActive = (id: number) => {
 //获取即将售空数据
 const getSoldOutGarbageList = async () => {
   const res = await getSoldOutGarbageAPI()
+  console.log(res);
   gaebageList.value = res.data
 }
 
 //是否加载数据完毕
 const isFinished = ref(false)
 
-onLoad(async () => {
-  await getGaebageList()
+onLoad(() => {
+  console.log(query.id);
+  handleActive(+query.id)
   isFinished.value = true
 })
 </script>
@@ -40,7 +45,7 @@ onLoad(async () => {
     <!-- 推荐封面图 -->
     <view class="cover">
       <image
-        src="http://yjy-xiaotuxian-dev.oss-cn-beijing.aliyuncs.com/picture/2021-05-20/84abb5b1-8344-49ae-afc1-9cb932f3d593.jpg"
+        src="../../static/images/back.jpg"
         mode="scaleToFill"></image>
     </view>
     <!-- 推荐选项 -->

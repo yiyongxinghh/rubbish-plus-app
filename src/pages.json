@@ -181,6 +181,18 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pagesMember/business",
+			"pages": [
+				{
+					"path": "business",
+					"style": {
+						"navigationStyle": "custom",
+						"navigationBarTitleText": "商家"
+					}
+				}
+			]
 		}
 	]
 }
