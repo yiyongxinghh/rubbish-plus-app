@@ -76,7 +76,7 @@ export const createRecoverOrderAPI = (order: Order) => {
  * 获取所有配送者为空的订单
  * @returns 
  */
-export const findNullDeliveryman = ()=>{
+export const findNullDeliverymanAPI = ()=>{
     return http({
         method: 'GET',
         url: '/order/nullDeliveryman'

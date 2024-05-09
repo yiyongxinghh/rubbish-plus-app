@@ -3,7 +3,7 @@
     <!-- 头部 -->
     <RpTitle :title="'我的订单'" />
     <!-- 订单列表 -->
-    <scroll-view scroll-y class="order-content">
+    <scroll-view scroll-y class="order-content" v-if="userDate?.userRank !== 1">
       <uni-collapse accordion>
         <uni-collapse-item
           :title="`订单${order.orderId}--${dayjs(order.orderDate).format(
@@ -34,8 +34,29 @@
         </uni-collapse-item>
       </uni-collapse>
     </scroll-view>
+    <scroll-view scroll-y class="order-content" v-else>
+      <uni-collapse accordion>
+        <uni-collapse-item
+          :title="`订单${order.orderId}--${dayjs(order.orderDate).format(
+            'YYYY-MM-DD HH:mm:ss'
+          )}`"
+          :border="false"
+          v-for="order in orderList"
+        >
+          <uni-list>
+            <uni-list-item
+              :title="order.orderDescription"
+              :note="`金额${order.orderMoney}`"
+              :rightText="'未配送'"
+              clickable
+              @click="open(order)"
+            />
+          </uni-list>
+        </uni-collapse-item>
+      </uni-collapse>
+    </scroll-view>
     <uni-popup ref="popup" type="dialog">
-      <uni-popup-dialog title="签收" @confirm="isSign()">
+      <uni-popup-dialog :title="delivery ? '接单' : '签收'" @confirm="isSign()">
       </uni-popup-dialog>
     </uni-popup>
   </view>
@@ -44,41 +65,68 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
 import { findUserAllOrderAPI } from "@/services/user";
-import { updateOrderApI } from "@/services/shop";
+import { updateOrderApI, findNullDeliverymanAPI } from "@/services/shop";
 import { onLoad } from "@dcloudio/uni-app";
 import { useUserStore } from "@/stores/userStore";
 import { ref } from "vue";
 
 const { userDate } = useUserStore();
 
-const popup = ref()
-const orderId = ref()
+const popup = ref();
+const orderId = ref();
+
+const delivery = ref(false);
 
 const orderList = ref([]);
+//获取用户订单
 const findUserAllOrder = async () => {
   const { data } = await findUserAllOrderAPI(
     userDate!.userId,
-    userDate!.userRank,
+    userDate!.userRank
   );
   console.log(data);
 
   orderList.value = data;
 };
 
-const open = (order:any)=>{
+const open = (order: any) => {
   console.log(order);
-  orderId.value = order.orderId
-  popup.value.open()
-}
+  orderId.value = order.orderId;
+  if (!order.Deliveryman) {
+    delivery.value = true;
+  }
+  popup.value.open();
+};
+
+//获取所有配送者为空的订单
+const findNullDeliveryman = async () => {
+  const { data } = await findNullDeliverymanAPI();
+  console.log(data);
+
+  orderList.value = data;
+};
 
 //签收
 const isSign = async () => {
-  await updateOrderApI(orderId.value, {orderIsSign:true});
-  await findUserAllOrder();
+  if(delivery.value){
+    await updateOrderApI(orderId.value, { Deliveryman: userDate!.userId });
+  }else{
+    await updateOrderApI(orderId.value, { orderIsSign: true });
+  }
+  if (userDate?.userRank !== 1) {
+    await findUserAllOrder();
+  } else {
+    await findNullDeliveryman();
+  }
+  delivery.value = false;
 };
 
 onLoad(async () => {
-  await findUserAllOrder();
+  if (userDate?.userRank !== 1) {
+    await findUserAllOrder();
+  } else {
+    await findNullDeliveryman();
+  }
 });
 </script>
 

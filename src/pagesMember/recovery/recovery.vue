@@ -5,7 +5,7 @@
     <!-- 回收卡片 -->
     <view class="recovery-card" v-for="category in categoryList">
       <view class="header">
-        <image :src="category.img" mode="scaleToFill" />
+        <image class="icon" :src="category.img" mode="scaleToFill" />
         <text>{{ category.categoryName }}</text>
       </view>
       <button @click="change(category)">回收</button>
@@ -75,8 +75,23 @@ const getGarbageCategory = async () => {
   const { data } = await getGarbageCategoryAPI();
   categoryList.value = data.category;
   categoryList.value.forEach((item: any) => {
-    item.img = `../../static/my/${item.categoryName}.png`;
+    switch (item.categoryName) {
+      case "可回收物":
+        item.img = `../../static/my/rubbish.png`;
+        break;
+      case "有害垃圾":
+        item.img = `../../static/my/rubbish4.png`;
+        break;
+      case "厨余垃圾":
+        item.img = `../../static/my/rubbish1.png`;
+        break;
+      case "其他垃圾":
+        item.img = `../../static/my/rubbish3.png`;
+        break;
+    }
   });
+  console.log(categoryList.value);
+  
 };
 
 //弹框
@@ -94,7 +109,7 @@ const close = () => {
 //确认
 const confirm = () => {
   recover();
-  close()
+  close();
 };
 
 //回收
@@ -143,7 +158,7 @@ page {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      image {
+      .icon{
         width: 100rpx;
         height: 100rpx;
       }

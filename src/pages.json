@@ -1,198 +1,200 @@
 {
-	"easycom": {
-		"autoscan": true,
-		"custom": {
-			// uni-ui 规则如下配置
-			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue",
-			//组件自动导入 以Rp开头的组件在components文件夹下
-			"^Rp(.*)": "@/components/Rp$1.vue"
-		}
-	},
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/login/login",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/shop/shop",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "商城"
-			}
-		},
-		{
-			"path": "pages/message/message",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "消息"
-			}
-		},
-		{
-			"path": "pages/hot/hot",
-			"style": {
-				"navigationBarTitleText": "热门推荐"
-			}
-		},
-		{
-			"path": "pages/goods/goods",
-			"style": {
-				"navigationBarTitleText": "废品详情"
-			}
-		},
-		{
-			"path": "pages/add/add",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "新增"
-			}
-		},
-		{
-			"path": "pages/my/my",
-			"style": {
-				"navigationStyle": "custom",
-				"navigationBarTitleText": "我的"
-			}
-		}
-	],
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
-	},
-	"tabBar": {
-		"height": "0",
-		"list": [
-			{
-				"pagePath": "pages/index/index"
-			},
-			{
-				"pagePath": "pages/shop/shop"
-			},
-			{
-				"pagePath": "pages/message/message"
-			},
-			{
-				"pagePath": "pages/my/my"
-			}
-		]
-	},
-	"subPackages": [
-		{
-			"root": "pagesMember/settings",
-			"pages": [
-				{
-					"path": "settings",
-					"style": {
-						"navigationBarTitleText": "设置"
-					}
-				}
-			]
-		},
-		{
-			"root": "pagesMember/chat",
-			"pages": [
-				{
-					"path": "chat",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "聊天"
-					}
-				}
-			]
-		},
-		{
-			"root": "pagesMember/collect",
-			"pages": [
-				{
-					"path": "collect",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "收藏"
-					}
-				}
-			]
-		},
-		{
-			"root": "pagesMember/comment",
-			"pages": [
-				{
-					"path": "comment",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "评价"
-					}
-				}
-			]
-		},
-		{
-			"root": "pagesMember/money",
-			"pages": [
-				{
-					"path": "money",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "存款"
-					}
-				}
-			]
-		},
-		{
-			"root": "pagesMember/order",
-			"pages": [
-				{
-					"path": "order",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "订单"
-					}
-				}
-			]
-		},
-		{
-			"root": "pagesMember/recovery",
-			"pages": [
-				{
-					"path": "recovery",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "回收"
-					}
-				}
-			]
-		},
-		{
-			"root": "pagesMember/profile",
-			"pages": [
-				{
-					"path": "profile",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "修改个人信息"
-					}
-				}
-			]
-		},
-		{
-			"root": "pagesMember/business",
-			"pages": [
-				{
-					"path": "business",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "商家"
-					}
-				}
-			]
-		}
-	]
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      // uni-ui 规则如下配置
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue",
+      //组件自动导入 以Rp开头的组件在components文件夹下
+      "^Rp(.*)": "@/components/Rp$1.vue"
+    }
+  },
+  "pages": [
+    //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+
+    {
+      "path": "pages/shop/shop",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "商城"
+      }
+    },
+    {
+      "path": "pages/message/message",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "消息"
+      }
+    },
+    {
+      "path": "pages/hot/hot",
+      "style": {
+        "navigationBarTitleText": "热门推荐"
+      }
+    },
+    {
+      "path": "pages/goods/goods",
+      "style": {
+        "navigationBarTitleText": "废品详情"
+      }
+    },
+    {
+      "path": "pages/add/add",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "新增"
+      }
+    },
+    {
+      "path": "pages/my/my",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "我的"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "height": "0",
+    "list": [
+      {
+        "pagePath": "pages/index/index"
+      },
+      {
+        "pagePath": "pages/shop/shop"
+      },
+      {
+        "pagePath": "pages/message/message"
+      },
+      {
+        "pagePath": "pages/my/my"
+      }
+    ]
+  },
+  "subPackages": [
+    {
+      "root": "pagesMember/settings",
+      "pages": [
+        {
+          "path": "settings",
+          "style": {
+            "navigationBarTitleText": "设置"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pagesMember/chat",
+      "pages": [
+        {
+          "path": "chat",
+          "style": {
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "聊天"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pagesMember/collect",
+      "pages": [
+        {
+          "path": "collect",
+          "style": {
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "收藏"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pagesMember/comment",
+      "pages": [
+        {
+          "path": "comment",
+          "style": {
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "评价"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pagesMember/money",
+      "pages": [
+        {
+          "path": "money",
+          "style": {
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "存款"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pagesMember/order",
+      "pages": [
+        {
+          "path": "order",
+          "style": {
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "订单"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pagesMember/recovery",
+      "pages": [
+        {
+          "path": "recovery",
+          "style": {
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "回收"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pagesMember/profile",
+      "pages": [
+        {
+          "path": "profile",
+          "style": {
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "修改个人信息"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pagesMember/business",
+      "pages": [
+        {
+          "path": "business",
+          "style": {
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "商家"
+          }
+        }
+      ]
+    }
+  ]
 }
